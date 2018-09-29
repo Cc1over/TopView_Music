@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_alignParentTop="true"
+        android:id="@+id/search_llyt_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/red"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+
+        <ImageButton
+            android:id="@+id/search_ib_back"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:background="@color/red"
+            android:gravity="center"
+            android:src="@drawable/back_icon"
+            tools:ignore="ContentDescription" />
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search_sv_search"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            app:iconifiedByDefault="false"
+            app:queryHint="搜索音乐、MV、歌单、用户">
+        </android.support.v7.widget.SearchView>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_above="@id/search_fragment_bottom"
+        android:id="@+id/search_flyt_fragment_place"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_llyt_title">
+    </FrameLayout>
+
+    <fragment
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:id="@+id/search_fragment_bottom"
+        android:name="com.hebaiyi.www.topviewmusic.music.view.BottomFragment"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"/>
+
+</RelativeLayout>

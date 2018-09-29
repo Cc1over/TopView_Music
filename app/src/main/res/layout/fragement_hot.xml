@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:text="@string/hot_title"
+        android:textSize="16sp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/deep_grey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.hebaiyi.www.topviewmusic.widget.FlowLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        app:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        android:id="@+id/hot_flow_lyt_hotWords"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </com.hebaiyi.www.topviewmusic.widget.FlowLayout>
+
+</LinearLayout>

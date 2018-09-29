@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/local_swipeRefresh_lyt_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/local_nested_scrollview_base"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:background="@drawable/click_bg"
+                    android:id="@+id/local_rlyt_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/local_music_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/local_music"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/local_music_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignBaseline="@+id/local_music_icon"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_toEndOf="@id/local_music_icon"
+                        android:gravity="center"
+                        android:text="@string/local_music"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0.01dp"
+                        android:layout_below="@+id/local_music_text"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/shallow_grey" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/click_bg"
+                    android:id="@+id/local_rlyt_lru_play"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/local_lru_play_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/local_lru_play"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/local_lru_play_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignBaseline="@+id/local_lru_play_icon"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_toEndOf="@id/local_lru_play_icon"
+                        android:gravity="center"
+                        android:text="@string/local_lru_play"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0.01dp"
+                        android:layout_below="@+id/local_lru_play_text"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/shallow_grey" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/click_bg"
+                    android:id="@+id/local_rlyt_download_management"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/local_download_management_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/local_download_managment"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/local_download_management_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignBaseline="@+id/local_download_management_icon"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_toEndOf="@+id/local_download_management_icon"
+                        android:gravity="center"
+                        android:text="@string/local_download_management"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0.01dp"
+                        android:layout_below="@+id/local_download_management_text"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/shallow_grey" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/click_bg"
+                    android:id="@+id/local_rlyt_my_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/local_my_radio_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/local_my_radio"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/local_my_radio_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignBaseline="@+id/local_my_radio_icon"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_toEndOf="@+id/local_my_radio_icon"
+                        android:gravity="center"
+                        android:text="@string/local_my_radio"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0.01dp"
+                        android:layout_below="@+id/local_my_radio_text"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/shallow_grey" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:background="@drawable/click_bg"
+                    android:id="@+id/local_rlyt_my_collection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/local_my_collection_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/local_my_collection"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/local_my_collection_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignBaseline="@+id/local_my_collection_icon"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_toEndOf="@+id/local_my_collection_icon"
+                        android:gravity="center"
+                        android:text="@string/local_my_collection"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0.01dp"
+                        android:layout_below="@+id/local_my_collection_text"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/shallow_grey" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:background="@drawable/click_bg"
+                    android:layout_marginTop="43dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/local_rcv_recommend_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>

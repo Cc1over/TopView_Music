@@ -1,0 +1,51 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">TopViewMusic</string>
+
+    <!--HomeActivity模块-->
+    <string name="home_msg">我的消息</string>
+    <string name="home_vip">会员中心</string>
+    <string name="home_shop">商城</string>
+    <string name="home_game">游戏推荐Beta</string>
+    <string name="home_free">在线听歌免流量</string>
+    <string name="home_local">附近的人</string>
+    <string name="home_know">听歌识曲</string>
+
+    <!--resultFragment-->
+    <string name="result_song">单曲</string>
+    <string name="result_artist">文章</string>
+    <string name="result_album">专辑</string>
+
+    <!--hotFragment模块-->
+    <string name="hot_title">热门搜索</string>
+
+    <!--本地模块-->
+    <string name="local_music">本地音乐</string>
+    <string name="local_lru_play">最近播放</string>
+    <string name="local_download_management">下载管理</string>
+    <string name="local_my_radio">我的电台</string>
+    <string name="local_my_collection">我的收藏</string>
+    <string name="local_recommend_song">推荐歌单</string>
+
+    <!--选择界面模块-->
+    <string name="selection_recommend">推荐</string>
+    <string name="selection_radio">电台</string>
+    <string name="selection_artist">文章</string>
+    <string name="selection_rank">排行榜</string>
+
+    <!--billboard-->
+    <string name="billboard_title">官方榜</string>
+
+    <!--bottom_layout-->
+    <string name="bottom_loading" tools:ignore="TypographyEllipsis">正在加载...</string>
+
+    <!--本地音乐模块-->
+    <string name="local_music_list_header_text">播放全部</string>
+
+    <!--sidebarItemView&&sidebarView-->
+    <string name="default_text_content">"-"</string>
+    
+    <!--bottom_fragment-->
+    <string name="bottom_default_name">TOPVIEW MUSIC</string>
+    <string name="bottom_default_singer">随心一按 听点有趣</string>
+    
+</resources>

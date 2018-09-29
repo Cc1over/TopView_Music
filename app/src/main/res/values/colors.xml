@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffce3d3a</color>
+    <color name="colorPrimaryDark">#ffce3d3a</color>
+    <color name="colorAccent">#A52A2A</color>
+
+    <color name="red">#ffce3d3a</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="shallow_grey">#ffCCCCCC</color>
+    <color name="deep_grey">#666666</color>
+    <color name="silver">#F4F4F4</color>
+    <color name="transparent">#00000000</color>
+</resources>
+
+
+
