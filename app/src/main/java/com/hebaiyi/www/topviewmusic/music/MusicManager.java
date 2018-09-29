@@ -1,8 +1,11 @@
 package com.hebaiyi.www.topviewmusic.music;
 
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -14,8 +17,12 @@ public class MusicManager {
 
     private IMusicManager mManager;
     private boolean isConnected = false;
+    private MusicReceiver mReceiver;
+    private Context context = TopViewMusicApplication.getContext();
+    private OnMusicCompleteListener mListener;
 
     private static class Singleton {
+        @SuppressLint("StaticFieldLeak")
         private static MusicManager instance = new MusicManager();
     }
 
@@ -36,9 +43,16 @@ public class MusicManager {
                 isConnected = false;
             }
         };
-        Context context = TopViewMusicApplication.getContext();
         Intent i = new Intent(context, MusicService.class);
         context.bindService(i, connection, Context.BIND_AUTO_CREATE);
+        registered();
+    }
+
+    private void registered(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MusicService.MUSIC_BROADCAST_RECEIVER_ACTION);
+        mReceiver = new MusicReceiver();
+        context.registerReceiver(mReceiver, filter);
     }
 
     public void start() {
@@ -94,4 +108,22 @@ public class MusicManager {
         }
     }
 
+    private class MusicReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mListener != null) {
+                mListener.onComplete();
+            }
+        }
+
+    }
+
+    public interface OnMusicCompleteListener {
+        void onComplete();
+    }
+
+    public void setOnMusicCompleteListener(OnMusicCompleteListener oml) {
+        mListener = oml;
+    }
 }

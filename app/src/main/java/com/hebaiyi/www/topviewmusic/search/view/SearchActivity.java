@@ -85,6 +85,7 @@ public class SearchActivity
     protected void initVariables() {
         mHotFragment = new HotFragment();
         mResultFragment = new ResultFragment();
+        EventBus.getDefault().register(mResultFragment);
     }
 
     public void loadMore() {
@@ -212,5 +213,9 @@ public class SearchActivity
         haveSoftInput = false;
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(mResultFragment);
+    }
 }

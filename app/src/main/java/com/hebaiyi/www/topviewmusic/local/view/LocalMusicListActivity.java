@@ -46,6 +46,7 @@ public class LocalMusicListActivity
     private List<String> mFirstWords;
     private BottomFragment mBottomFragment;
     private List<LocalMusic> mMusic;
+    private int currPosition;
     private MusicManager mManager = MusicManager.getInstance();
 
     public static void actionStart(Context context) {
@@ -125,7 +126,15 @@ public class LocalMusicListActivity
         adapter.setLocalMusicListListener(new LocalMusicListAdapter.LocalMusicListListener() {
             @Override
             public void onClick(int position) {
+                currPosition = position;
                 mManager.setSong(setBottomSong(position).getPlayUrl());
+                mManager.start();
+            }
+        });
+        mManager.setOnMusicCompleteListener(new MusicManager.OnMusicCompleteListener() {
+            @Override
+            public void onComplete() {
+                mManager.setSong(setBottomSong(currPosition + 1).getPlayUrl());
                 mManager.start();
             }
         });

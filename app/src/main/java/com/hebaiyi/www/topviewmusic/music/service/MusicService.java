@@ -1,7 +1,10 @@
 package com.hebaiyi.www.topviewmusic.music.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -13,14 +16,45 @@ import java.io.IOException;
 
 public class MusicService extends Service {
 
+    public static final String MUSIC_BROADCAST_RECEIVER_ACTION
+            = "TopViewMusic.music.service.MusicService.complete";
     private IMusicManager.Stub mManager;
     private MediaPlayer mPlayer;
     private boolean needToReset = false;
     private String currSongUrl;
-//    public static final String
 
     public MusicService() {
+        initMediaPlayer();
+        initManager();
+    }
+
+    private void initMediaPlayer() {
         mPlayer = new MediaPlayer();
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                Intent i = new Intent(MUSIC_BROADCAST_RECEIVER_ACTION);
+                sendBroadcast(i);
+            }
+        });
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mPlayer != null) {
+            mPlayer.stop();
+            mPlayer.release();
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mManager;
+    }
+
+    private void initManager() {
         mManager = new IMusicManager.Stub() {
             @Override
             public void setSong(String songUrl) throws RemoteException {
@@ -28,7 +62,7 @@ public class MusicService extends Service {
                 if (currSongUrl == null) {
                     currSongUrl = songUrl;
                 } else {
-                    if(currSongUrl.equals(songUrl)){
+                    if (currSongUrl.equals(songUrl)) {
                         return;
                     }
                     currSongUrl = songUrl;
@@ -76,19 +110,7 @@ public class MusicService extends Service {
         };
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mPlayer != null) {
-            mPlayer.stop();
-            mPlayer.release();
-        }
-    }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mManager;
-    }
 
 
 }

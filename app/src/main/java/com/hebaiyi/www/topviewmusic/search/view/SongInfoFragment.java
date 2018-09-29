@@ -41,9 +41,8 @@ public class SongInfoFragment extends LazyFragment {
         initRecyclerView();
     }
 
-    @Subscribe
+    @Subscribe(sticky = true)
     public void handleRecyclerView(SearchContract.MergeSet ms) {
-        Log.e("handleRecyclerView: ", ms.getSongInfos() + "");
         int state = mParentFragment.obtainCurrState();
         if (state == SearchActivity.SEARCH_RESET) {
             mSongInfos.clear();
