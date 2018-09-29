@@ -56,10 +56,6 @@
             android:exported="false"
             android:process=":remote"></service>
 
-        <receiver
-            android:name=".music.MusicReceiver"
-            android:enabled="true"
-            android:exported="true"></receiver>
     </application>
 
 </manifest>

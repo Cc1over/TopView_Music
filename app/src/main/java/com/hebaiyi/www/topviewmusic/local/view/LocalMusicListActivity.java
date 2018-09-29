@@ -134,6 +134,9 @@ public class LocalMusicListActivity
         mManager.setOnMusicCompleteListener(new MusicManager.OnMusicCompleteListener() {
             @Override
             public void onComplete() {
+                if (currPosition + 1 == mMusic.size()) {
+                    currPosition = 0;
+                }
                 mManager.setSong(setBottomSong(currPosition + 1).getPlayUrl());
                 mManager.start();
             }
