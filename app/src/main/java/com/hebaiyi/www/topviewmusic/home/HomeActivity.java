@@ -157,17 +157,10 @@ public class HomeActivity extends BottomActivity implements View.OnClickListener
                     case 0:
                         mTabLytSelection.getTabAt(0).setIcon(R.drawable.titlebar_music_white);
                         mTabLytSelection.getTabAt(1).setIcon(R.drawable.titlebar_discover_grey);
-                        mTabLytSelection.getTabAt(2).setIcon(R.drawable.titlebar_read_grey);
                         break;
                     case 1:
                         mTabLytSelection.getTabAt(0).setIcon(R.drawable.titlebar_music_grey);
                         mTabLytSelection.getTabAt(1).setIcon(R.drawable.titlebar_discover_white);
-                        mTabLytSelection.getTabAt(2).setIcon(R.drawable.titlebar_read_grey);
-                        break;
-                    case 2:
-                        mTabLytSelection.getTabAt(0).setIcon(R.drawable.titlebar_music_grey);
-                        mTabLytSelection.getTabAt(1).setIcon(R.drawable.titlebar_discover_grey);
-                        mTabLytSelection.getTabAt(2).setIcon(R.drawable.titlebar_read_white);
                         break;
                 }
             }

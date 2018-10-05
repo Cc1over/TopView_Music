@@ -54,21 +54,19 @@ public class BottomFragment extends Fragment implements View.OnClickListener {
                 clickPlayBtn();
                 break;
             case R.id.bottom_ib_song_list:
+                showList();
                 break;
             case R.id.bottom_iv_pic:
-                playMusic();
+                MusicActivity.actionStart(getContext(),null);
                 break;
             case R.id.bottom_llyt_container:
-                playMusic();
+                MusicActivity.actionStart(getContext(),null);
                 break;
         }
     }
 
-    private void playMusic() {
-        if (mMusic.getPlayUrl() != null) {
-            mManager.setSong(mMusic.getPlayUrl());
-            mManager.start();
-        }
+    private void showList(){
+
     }
 
     public void setBottomSong(BottomMusic music) {
