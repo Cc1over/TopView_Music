@@ -1,20 +1,14 @@
 package com.hebaiyi.www.topviewmusic.local.model;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import com.hebaiyi.www.topviewmusic.bean.LocalMusic;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,9 +48,10 @@ public class LocalMusicListModel {
                         String albumPic = getAlbumArt(albumId, context);
                         if (isMusic != 0 && duration / (500 * 60) >= 1) {
                             music.setId(id);
-                            music.setTitle(title);
-                            music.setArtist(artist);
+                            music.setName(title);
+                            music.setSinger(artist);
                             music.setDuration(duration);
+                            Log.e("run",duration+"" );
                             music.setSize(size);
                             music.setUrl(url);
                             music.setAlbum(album);

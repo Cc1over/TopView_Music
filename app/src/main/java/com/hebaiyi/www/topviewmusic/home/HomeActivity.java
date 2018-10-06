@@ -7,17 +7,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.hebaiyi.www.topviewmusic.R;
-import com.hebaiyi.www.topviewmusic.base.activity.BaseActivity;
 import com.hebaiyi.www.topviewmusic.base.activity.BottomActivity;
 import com.hebaiyi.www.topviewmusic.base.adapter.FragmentAdapter;
-import com.hebaiyi.www.topviewmusic.bean.BottomMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.local.view.LocalFragment;
 import com.hebaiyi.www.topviewmusic.music.view.BottomFragment;
 import com.hebaiyi.www.topviewmusic.recommend.view.SelectionFragment;
@@ -105,12 +103,12 @@ public class HomeActivity extends BottomActivity implements View.OnClickListener
     }
 
     @Override
-    protected void getBottomState(BottomMusic music) {
+    protected void getBottomState(Music music) {
         mBottomFragment.setBottomSong(music);
     }
 
     @Override
-    protected BottomMusic setBottomState() {
+    protected Music setBottomState() {
         return mBottomFragment.getBottomMusic();
     }
 

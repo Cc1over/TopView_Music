@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hebaiyi.www.topviewmusic.R;
-import com.hebaiyi.www.topviewmusic.bean.BottomMusic;
-import com.hebaiyi.www.topviewmusic.music.MusicManager;
+import com.hebaiyi.www.topviewmusic.bean.Music;
+import com.hebaiyi.www.topviewmusic.bean.LocalMusic;
+import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
 
 public class BottomFragment extends Fragment implements View.OnClickListener {
 
@@ -26,7 +27,7 @@ public class BottomFragment extends Fragment implements View.OnClickListener {
     private TextView mTvSinger;
     private LinearLayout mLlytContainer;
     private boolean isPlaying = false;
-    private BottomMusic mMusic = new BottomMusic();
+    private Music mMusic = new Music();
     private MusicManager mManager = MusicManager.getInstance();
 
     @Nullable
@@ -57,10 +58,10 @@ public class BottomFragment extends Fragment implements View.OnClickListener {
                 showList();
                 break;
             case R.id.bottom_iv_pic:
-                MusicActivity.actionStart(getContext(),null);
+                MusicActivity.actionStart(getContext(),getBottomMusic());
                 break;
             case R.id.bottom_llyt_container:
-                MusicActivity.actionStart(getContext(),null);
+                MusicActivity.actionStart(getContext(),getBottomMusic());
                 break;
         }
     }
@@ -69,12 +70,13 @@ public class BottomFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void setBottomSong(BottomMusic music) {
+    public void setBottomSong(Music music) {
         mMusic.setName(music.getName());
         mMusic.setPicUrl(music.getPicUrl());
         mMusic.setPlaying(music.isPlaying());
         mMusic.setSinger(music.getSinger());
-        mMusic.setPlayUrl(music.getPlayUrl());
+        mMusic.setUrl(music.getUrl());
+        mMusic.setPlaying(music.isPlaying());
         isPlaying = music.isPlaying();
         if (music == null) {
             return;
@@ -100,7 +102,7 @@ public class BottomFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public BottomMusic getBottomMusic() {
+    public Music getBottomMusic() {
         mMusic.setPlaying(isPlaying);
         return mMusic;
     }

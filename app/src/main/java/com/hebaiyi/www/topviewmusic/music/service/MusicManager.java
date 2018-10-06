@@ -1,4 +1,4 @@
-package com.hebaiyi.www.topviewmusic.music;
+package com.hebaiyi.www.topviewmusic.music.service;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.hebaiyi.www.topviewmusic.app.TopViewMusicApplication;
-import com.hebaiyi.www.topviewmusic.music.service.MusicService;
+import com.hebaiyi.www.topviewmusic.music.IMusicManager;
 
 public class MusicManager {
 
@@ -126,4 +126,5 @@ public class MusicManager {
     public void setOnMusicCompleteListener(OnMusicCompleteListener oml) {
         mListener = oml;
     }
+
 }

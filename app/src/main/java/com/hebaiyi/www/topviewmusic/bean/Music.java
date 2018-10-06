@@ -3,48 +3,52 @@ package com.hebaiyi.www.topviewmusic.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class BottomMusic implements Parcelable {
+import com.hebaiyi.www.topviewmusic.music.contract.MusicContract;
+
+import java.util.List;
+
+public class Music implements Parcelable {
 
     private String picUrl;
-
     private String name;
-
     private String singer;
-
     private boolean isPlaying;
+    private String url;
+    private String lyrics;
+    private List<String> urls;
+    private int duration;
 
-    private String playUrl;
-
-    public BottomMusic(){
+    public Music() {
 
     }
 
-    public BottomMusic(String picUrl, String name, String singer, boolean isPlaying,String playUrl) {
-        this.picUrl = picUrl;
-        this.name = name;
-        this.singer = singer;
-        this.isPlaying = isPlaying;
-        this.playUrl = playUrl;
+
+    public List<String> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
     }
 
 
-    protected BottomMusic(Parcel in) {
+    protected Music(Parcel in) {
         picUrl = in.readString();
         name = in.readString();
         singer = in.readString();
         isPlaying = in.readByte() != 0;
-        playUrl = in.readString();
+        url = in.readString();
     }
 
-    public static final Creator<BottomMusic> CREATOR = new Creator<BottomMusic>() {
+    public static final Creator<Music> CREATOR = new Creator<Music>() {
         @Override
-        public BottomMusic createFromParcel(Parcel in) {
-            return new BottomMusic(in);
+        public Music createFromParcel(Parcel in) {
+            return new Music(in);
         }
 
         @Override
-        public BottomMusic[] newArray(int size) {
-            return new BottomMusic[size];
+        public Music[] newArray(int size) {
+            return new Music[size];
         }
     };
 
@@ -64,15 +68,24 @@ public class BottomMusic implements Parcelable {
         this.name = name;
     }
 
-    public String getPlayUrl() {
-        return playUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setPlayUrl(String playUrl) {
-        this.playUrl = playUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
+
     public String getSinger() {
         return singer;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public void setSinger(String singer) {
@@ -99,7 +112,16 @@ public class BottomMusic implements Parcelable {
         dest.writeString(name);
         dest.writeString(singer);
         dest.writeByte((byte) (isPlaying ? 1 : 0));
-        dest.writeString(playUrl);
+        dest.writeString(url);
     }
+
+    public String getLyrics() {
+        return lyrics;
+    }
+
+    public void setLyrics(String lyrics) {
+        this.lyrics = lyrics;
+    }
+
 
 }

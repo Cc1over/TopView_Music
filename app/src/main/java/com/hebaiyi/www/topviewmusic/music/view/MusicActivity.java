@@ -3,29 +3,37 @@ package com.hebaiyi.www.topviewmusic.music.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
-import com.hebaiyi.www.topviewmusic.bean.BottomMusic;
-import com.hebaiyi.www.topviewmusic.bean.LocalMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
+import com.hebaiyi.www.topviewmusic.local.view.LocalMusicListActivity;
 import com.hebaiyi.www.topviewmusic.music.contract.MusicContract;
 import com.hebaiyi.www.topviewmusic.music.presenter.MusicPresenterImp;
+import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
+import com.hebaiyi.www.topviewmusic.util.ToastUtil;
+
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 public class MusicActivity
         extends PresenterActivity<MusicContract.MusicView, MusicPresenterImp>
         implements MusicContract.MusicView, View.OnClickListener {
 
-    private static final int MODE_LIST_LOOP = 0;
-    private static final int MODE_SINGER_LOOP = 1;
-    private static final int MODE_SHUFFLE_PLAYBACK = 3;
+    public static final int MODE_LIST_LOOP = 0;
+    public static final int MODE_SINGER_LOOP = 1;
+    public static final int MODE_SHUFFLE_PLAYBACK = 2;
 
     private static final int FRAGMENT_PHOTO = 0XCCCC;
     private static final int FRAGMENT_LYRICS = 0XDDDD;
@@ -35,16 +43,19 @@ public class MusicActivity
     private FrameLayout mFlytCenter;
     private int[] mModeDrawable = {R.drawable.music_list_loop,
             R.drawable.music_single_loop, R.drawable.music_shuffle_playback};
-    private LocalMusic mLocalMusic;
+    private Music mMusic;
     private boolean isPlaying;
-    private int currFragment = FRAGMENT_PHOTO;
+    private int currFragment;
     private int currMode = MODE_LIST_LOOP;
     private PhotoFragment mPhotoFragment;
     private LyricsFragment mLyricsFragment;
+    private TextView mTvName, mTvSinger;
+    private TextView mTvCurrTime, mTvTotalTime;
+    private MusicManager mManager;
 
-    public static void actionStart(Context context, LocalMusic lm) {
+    public static void actionStart(Context context, Music m) {
         Intent i = new Intent(context, MusicActivity.class);
-        i.putExtra("local_music", lm);
+        i.putExtra("music", m);
         context.startActivity(i);
     }
 
@@ -64,8 +75,30 @@ public class MusicActivity
         mIvPast = findViewById(R.id.music_iv_past);
         mIvPlay = findViewById(R.id.music_iv_play);
         mFlytCenter = findViewById(R.id.music_flyt_center);
+        mTvName = findViewById(R.id.music_tv_name);
+        mTvSinger = findViewById(R.id.music_tv_singer);
+        mTvCurrTime = findViewById(R.id.music_tv_curr_time);
+        mTvTotalTime = findViewById(R.id.music_tv_total_time);
+        setData();
         initToolbar(mTbTitle, R.drawable.back_icon);
+        replaceFragment();
     }
+
+    private void setData() {
+        if (mMusic != null) {
+            mTvName.setText(mMusic.getName());
+            mTvSinger.setText(mMusic.getSinger());
+            mPhotoFragment.setPhoto(mMusic.getPicUrl());
+            Log.e("duration", mMusic.getDuration() + "");
+            isPlaying = mMusic.isPlaying();
+            if (isPlaying) {
+                mIvPlay.setImageResource(R.drawable.music_playing);
+            } else {
+                mIvPlay.setImageResource(R.drawable.music_play);
+            }
+        }
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -97,6 +130,17 @@ public class MusicActivity
             currMode = 0;
         }
         mIvMode.setImageResource(mModeDrawable[currMode]);
+        switch (currMode) {
+            case MODE_LIST_LOOP:
+                ToastUtil.showToast("列表循环", Toast.LENGTH_SHORT);
+                break;
+            case MODE_SINGER_LOOP:
+                ToastUtil.showToast("单曲循环", Toast.LENGTH_SHORT);
+                break;
+            case MODE_SHUFFLE_PLAYBACK:
+                ToastUtil.showToast("随机播放", Toast.LENGTH_SHORT);
+                break;
+        }
     }
 
     private void showList() {
@@ -119,16 +163,39 @@ public class MusicActivity
             mIvPlay.setImageResource(R.drawable.music_playing);
             isPlaying = true;
         }
+        mPhotoFragment.setRotate(isPlaying);
+        if (!isPlaying) {
+            mManager.pause();
+        } else {
+            mManager.start();
+        }
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
     }
 
     @Override
     protected void initVariables() {
-
+        mPhotoFragment = new PhotoFragment();
+        mLyricsFragment = new LyricsFragment();
+        mMusic = getIntent().getParcelableExtra("music");
+        if (mMusic != null) {
+            isPlaying = mMusic.isPlaying();
+        }
+        mManager = MusicManager.getInstance();
     }
 
     @Override
     protected void loadData() {
 
+    }
+
+
+    @Subscribe(sticky = true,priority = 1)
+    public void onChangeEvent(Music music) {
+        mMusic = music;
+        setData();
     }
 
     @Override
@@ -142,27 +209,30 @@ public class MusicActivity
     }
 
     @Override
-    protected void getBottomState(BottomMusic music) {
+    protected void getBottomState(Music music) {
 
     }
 
-    private void replaceFragment(){
+    private void replaceFragment() {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        if(currFragment == FRAGMENT_PHOTO){
+        if (currFragment == FRAGMENT_PHOTO) {
             transaction.replace(R.id.music_flyt_center, mLyricsFragment);
             currFragment = FRAGMENT_LYRICS;
+            transaction.commit();
+            return;
         }
-        if(currFragment == FRAGMENT_LYRICS){
+        if (currFragment == FRAGMENT_LYRICS || currFragment == 0) {
             transaction.replace(R.id.music_flyt_center, mPhotoFragment);
             currFragment = FRAGMENT_PHOTO;
+            transaction.commit();
         }
-        transaction.commit();
     }
 
     @Override
-    protected BottomMusic setBottomState() {
-        return null;
+    protected Music setBottomState() {
+        mMusic.setPlaying(isPlaying);
+        return mMusic;
     }
 
     @Override

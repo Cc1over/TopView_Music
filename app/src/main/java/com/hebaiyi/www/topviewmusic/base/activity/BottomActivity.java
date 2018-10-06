@@ -2,7 +2,7 @@ package com.hebaiyi.www.topviewmusic.base.activity;
 
 import android.os.Bundle;
 
-import com.hebaiyi.www.topviewmusic.bean.BottomMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
 
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -33,13 +33,13 @@ public abstract class BottomActivity extends BaseActivity {
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MainThread)
-    public void onEvent(BottomMusic music) {
+    public void onEvent(Music music) {
         getBottomState(music);
     }
 
-    protected abstract void getBottomState(BottomMusic music);
+    protected abstract void getBottomState(Music music);
 
-    protected abstract BottomMusic setBottomState();
+    protected abstract Music setBottomState();
 
 
 }

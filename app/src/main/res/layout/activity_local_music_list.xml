@@ -13,29 +13,25 @@
         android:background="@color/red">
     </android.support.v7.widget.Toolbar>
 
-    <FrameLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/local_music_list_rcv_content"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@+id/local_music_list_fragment"
         android:layout_below="@+id/local_music_list_tb_title"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/local_music_list_rcv_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
+        android:background="@color/white">
 
-        </android.support.v7.widget.RecyclerView>
+    </android.support.v7.widget.RecyclerView>
 
         <com.hebaiyi.www.topviewmusic.widget.SidebarView
             android:id="@+id/local_music_list_sidebar_view"
             android:layout_width="match_parent"
+            android:layout_above="@+id/local_music_list_fragment"
+            android:layout_below="@+id/local_music_list_tb_title"
+            android:background="@color/transparent"
             android:layout_height="match_parent">
 
         </com.hebaiyi.www.topviewmusic.widget.SidebarView>
-
-
-    </FrameLayout>
 
     <fragment
         android:id="@+id/local_music_list_fragment"

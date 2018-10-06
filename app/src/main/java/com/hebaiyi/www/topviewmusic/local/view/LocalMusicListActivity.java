@@ -15,13 +15,14 @@ import android.view.MenuItem;
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.PermissionActivity;
 import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
-import com.hebaiyi.www.topviewmusic.bean.BottomMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.bean.LocalMusic;
 import com.hebaiyi.www.topviewmusic.local.adapter.LocalMusicListAdapter;
 import com.hebaiyi.www.topviewmusic.local.contract.LocalMusicListContract;
 import com.hebaiyi.www.topviewmusic.local.presenter.LocalMusicListPresenterImp;
-import com.hebaiyi.www.topviewmusic.music.MusicManager;
+import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
 import com.hebaiyi.www.topviewmusic.music.view.BottomFragment;
+import com.hebaiyi.www.topviewmusic.music.view.MusicActivity;
 import com.hebaiyi.www.topviewmusic.widget.SidebarView;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -45,7 +46,7 @@ public class LocalMusicListActivity
     private SidebarView mSidebarView;
     private List<String> mFirstWords;
     private BottomFragment mBottomFragment;
-    private List<LocalMusic> mMusic;
+    private List<LocalMusic> mMusics;
     private int currPosition;
     private MusicManager mManager = MusicManager.getInstance();
 
@@ -60,12 +61,12 @@ public class LocalMusicListActivity
     }
 
     @Override
-    protected void getBottomState(BottomMusic music) {
+    protected void getBottomState(Music music) {
         mBottomFragment.setBottomSong(music);
     }
 
     @Override
-    protected BottomMusic setBottomState() {
+    protected Music setBottomState() {
         return mBottomFragment.getBottomMusic();
     }
 
@@ -100,7 +101,7 @@ public class LocalMusicListActivity
         outputF.setCaseType(HanyuPinyinCaseType.UPPERCASE);
         try {
             for (int i = 0; i < musics.size(); i++) {
-                char ch = musics.get(i).getTitle().charAt(0);
+                char ch = musics.get(i).getName().charAt(0);
                 String[] firstWord = PinyinHelper.toHanyuPinyinStringArray(ch, outputF);
                 if (firstWord != null) {
                     mFirstWords.add(firstWord[0].charAt(0) + "");
@@ -117,9 +118,9 @@ public class LocalMusicListActivity
         if (musics == null) {
             return;
         }
-        mMusic = musics;
+        mMusics = musics;
         final LocalMusicListAdapter adapter = new LocalMusicListAdapter(musics);
-        LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        final LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
         mRcvContent.setLayoutManager(manager);
         mRcvContent.setAdapter(adapter);
         obtainFirstWord(musics);
@@ -127,33 +128,42 @@ public class LocalMusicListActivity
             @Override
             public void onClick(int position) {
                 currPosition = position;
-                mManager.setSong(setBottomSong(position).getPlayUrl());
-                mManager.start();
+                mManager.setSong(setBottomSong(position).getUrl());
             }
         });
         mManager.setOnMusicCompleteListener(new MusicManager.OnMusicCompleteListener() {
             @Override
             public void onComplete() {
-                if (currPosition + 1 == mMusic.size()) {
+                if (currPosition + 1 == mMusics.size()) {
                     currPosition = 0;
+                    Music music = setBottomSong(currPosition);
+                    mManager.setSong(music.getUrl());
+                    EventBus.getDefault().postSticky(music);
+                    return;
                 }
-                mManager.setSong(setBottomSong(currPosition + 1).getPlayUrl());
-                mManager.start();
+                Music music = setBottomSong(currPosition + 1);
+                mManager.setSong(music.getUrl());
+                EventBus.getDefault().postSticky(music);
             }
         });
     }
 
-    private BottomMusic setBottomSong(int position) {
-        LocalMusic lm = mMusic.get(position);
-        BottomMusic bm = new BottomMusic(lm.getAlbumPic(), lm.getTitle(),
-                lm.getArtist(), true, lm.getUrl());
-        mBottomFragment.setBottomSong(bm);
-        return bm;
+    private Music setBottomSong(int position) {
+        LocalMusic lm = mMusics.get(position);
+        Music m = lm.createMusic(true);
+        mBottomFragment.setBottomSong(m);
+        return m;
     }
 
     @Override
     protected void initVariables() {
+        EventBus.getDefault().register(new MusicActivity());
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(new MusicActivity());
     }
 
     @Override

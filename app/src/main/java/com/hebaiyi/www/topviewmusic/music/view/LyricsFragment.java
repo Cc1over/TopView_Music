@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hebaiyi.www.topviewmusic.R;
+
 public class LyricsFragment extends Fragment {
 
     private View mView;
@@ -16,6 +18,10 @@ public class LyricsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        if (mView == null) {
+            mView = LayoutInflater.from(container.getContext())
+                    .inflate(R.layout.fragment_lyrics, container, false);
+        }
+        return mView;
     }
 }

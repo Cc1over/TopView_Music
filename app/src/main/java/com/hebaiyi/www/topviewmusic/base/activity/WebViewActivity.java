@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -12,7 +11,6 @@ import android.webkit.WebViewClient;
 
 
 import com.hebaiyi.www.topviewmusic.R;
-import com.hebaiyi.www.topviewmusic.bean.BottomMusic;
 
 public class WebViewActivity extends BaseActivity {
 

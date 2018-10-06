@@ -43,9 +43,17 @@
 
     <!--sidebarItemView&&sidebarView-->
     <string name="default_text_content">"-"</string>
-    
+
     <!--bottom_fragment-->
     <string name="bottom_default_name">TOPVIEW MUSIC</string>
     <string name="bottom_default_singer">随心一按 听点有趣</string>
-    
+
+    <!--photo_fragment-->
+    <string name="text_standard">标准</string>
+    <string name="text_MV">M V</string>
+    <string name="text_effect">音效</string>
+
+    <!--music_activity-->
+    <string name="text_zero_time">00:00</string>
+
 </resources>

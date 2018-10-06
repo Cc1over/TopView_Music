@@ -67,8 +67,8 @@ public class LocalMusicListAdapter extends BaseAdapter<LocalMusic> {
     public void renewListItem(CommonViewHolder viewHolder, LocalMusic localMusic) {
         TextView name = viewHolder.getView(R.id.list_item_tv_name);
         TextView singer = viewHolder.getView(R.id.list_item_tv_singer);
-        name.setText(localMusic.getTitle());
-        singer.setText(localMusic.getArtist());
+        name.setText(localMusic.getName());
+        singer.setText(localMusic.getSinger());
     }
 
     @Override
@@ -78,6 +78,11 @@ public class LocalMusicListAdapter extends BaseAdapter<LocalMusic> {
         } else {
             return TYPE_NORMAL;
         }
+    }
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount() + 1;
     }
 
     public void setLocalMusicListListener(LocalMusicListListener listener) {

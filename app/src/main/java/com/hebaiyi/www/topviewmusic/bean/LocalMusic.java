@@ -7,23 +7,24 @@ public class LocalMusic implements Parcelable {
 
     private long id;
     private int albumId;
-    private String title;
-    private String artist;
+    private String name;
+    private String singer;
     private long size;
     private String url;
     private long duration;
     private String album;
     private String albumPic;
 
-    public LocalMusic(){
+    public LocalMusic() {
 
     }
+
 
     protected LocalMusic(Parcel in) {
         id = in.readLong();
         albumId = in.readInt();
-        title = in.readString();
-        artist = in.readString();
+        name = in.readString();
+        singer = in.readString();
         size = in.readLong();
         url = in.readString();
         duration = in.readLong();
@@ -43,14 +44,6 @@ public class LocalMusic implements Parcelable {
         }
     };
 
-    public String getAlbumPic() {
-        return albumPic;
-    }
-
-    public void setAlbumPic(String albumPic) {
-        this.albumPic = albumPic;
-    }
-
     public long getId() {
         return id;
     }
@@ -67,20 +60,20 @@ public class LocalMusic implements Parcelable {
         this.albumId = albumId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getArtist() {
-        return artist;
+    public String getSinger() {
+        return singer;
     }
 
-    public void setArtist(String artist) {
-        this.artist = artist;
+    public void setSinger(String singer) {
+        this.singer = singer;
     }
 
     public long getSize() {
@@ -115,6 +108,24 @@ public class LocalMusic implements Parcelable {
         this.album = album;
     }
 
+    public String getAlbumPic() {
+        return albumPic;
+    }
+
+    public void setAlbumPic(String albumPic) {
+        this.albumPic = albumPic;
+    }
+
+    public Music createMusic(boolean isPlaying){
+        Music music = new Music();
+        music.setPicUrl(albumPic);
+        music.setName(name);
+        music.setSinger(singer);
+        music.setPlaying(isPlaying);
+        music.setUrl(url);
+        return music;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -124,8 +135,8 @@ public class LocalMusic implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeInt(albumId);
-        dest.writeString(title);
-        dest.writeString(artist);
+        dest.writeString(name);
+        dest.writeString(singer);
         dest.writeLong(size);
         dest.writeString(url);
         dest.writeLong(duration);

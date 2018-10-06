@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -58,7 +59,6 @@ public class MusicService extends Service {
         mManager = new IMusicManager.Stub() {
             @Override
             public void setSong(String songUrl) throws RemoteException {
-                Log.e("setSong: ", songUrl);
                 if (currSongUrl == null) {
                     currSongUrl = songUrl;
                 } else {
@@ -70,7 +70,13 @@ public class MusicService extends Service {
                 try {
                     if (!needToReset) {
                         mPlayer.setDataSource(songUrl);
-                        mPlayer.prepare();
+                        mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                mPlayer.start();
+                            }
+                        });
+                        mPlayer.prepareAsync();
                         needToReset = true;
                     } else {
                         mPlayer.reset();
@@ -109,8 +115,6 @@ public class MusicService extends Service {
             }
         };
     }
-
-
 
 
 }

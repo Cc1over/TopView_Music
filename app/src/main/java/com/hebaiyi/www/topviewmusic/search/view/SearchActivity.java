@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -16,7 +15,7 @@ import android.widget.ImageButton;
 
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
-import com.hebaiyi.www.topviewmusic.bean.BottomMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.bean.HotWord;
 import com.hebaiyi.www.topviewmusic.bean.SearchMerge;
 import com.hebaiyi.www.topviewmusic.music.view.BottomFragment;
@@ -63,12 +62,12 @@ public class SearchActivity
     }
 
     @Override
-    protected void getBottomState(BottomMusic music) {
+    protected void getBottomState(Music music) {
         mBottomFragment.setBottomSong(music);
     }
 
     @Override
-    protected BottomMusic setBottomState() {
+    protected Music setBottomState() {
         return mBottomFragment.getBottomMusic();
     }
 
@@ -98,9 +97,9 @@ public class SearchActivity
         if(info==null){
             return;
         }
-        BottomMusic music = new BottomMusic(info.getPicSmall(), info.getTitle(),
-                info.getAuthor(),true,null);
-        mBottomFragment.setBottomSong(music);
+//        Music music = new Music(info.getPicSmall(), info.getTitle(),
+//                info.getAuthor(),true,null);
+//        mBottomFragment.setBottomSong(music);
     }
 
     public void search(String query) {
