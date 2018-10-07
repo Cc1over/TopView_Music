@@ -12,8 +12,8 @@ import java.lang.ref.WeakReference;
 public class MusicPresenterImp extends BasePresenter<MusicContract.MusicView>
                              implements MusicContract.MusicPresenter {
 
-    private static final int OBTAIN_MUSIC_SUCCESS = 0X8541;
-    private static final int OBTAIN_MUSIC_FAIL = 0XCCCD;
+    private static final int OBTAIN_LYRICS_SUCCESS = 0X8541;
+    private static final int OBTAIN_LYRICS_FAIL = 0XCCCD;
 
     private MusicModel mModel;
     private MusicContract.MusicView mView;
@@ -41,9 +41,9 @@ public class MusicPresenterImp extends BasePresenter<MusicContract.MusicView>
             }
             MusicContract.MusicView mv = mpi.mView;
             switch (msg.what){
-                case OBTAIN_MUSIC_SUCCESS:
+                case OBTAIN_LYRICS_SUCCESS:
                     break;
-                case OBTAIN_MUSIC_FAIL:
+                case OBTAIN_LYRICS_FAIL:
                     break;
             }
         }

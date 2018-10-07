@@ -13,29 +13,28 @@ import okhttp3.Response;
 
 public class MusicModel {
 
-    public void loadNetMusic(String songId){
-        String address = MusicApi.Song.songInfo(songId);
-        HttpUtil.asyncRequest(address, new Callback() {
+    public void loadLyrics(String lrc, final LyricsCallback callback) {
+        HttpUtil.asyncRequest(lrc, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                callback.onFail();
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-
+                String data = response.body().string();
             }
         });
+
     }
 
-    public interface MusicModelCallback{
+    public interface LyricsCallback {
 
         void onSuccess();
 
         void onFail();
 
     }
-
 
 
 }

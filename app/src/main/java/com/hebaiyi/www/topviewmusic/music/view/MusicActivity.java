@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hebaiyi.www.topviewmusic.R;
+import com.hebaiyi.www.topviewmusic.base.activity.BottomActivity;
 import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
 import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.music.contract.MusicContract;
@@ -25,8 +26,7 @@ import com.hebaiyi.www.topviewmusic.util.ToastUtil;
 import de.greenrobot.event.Subscribe;
 
 public class MusicActivity
-        extends PresenterActivity<MusicContract.MusicView, MusicPresenterImp>
-        implements MusicContract.MusicView, View.OnClickListener {
+        extends BottomActivity implements View.OnClickListener {
 
     public static final String RECEIVER_ACTION = "com.hebaiyi.www.music.MusicActivity.RECEIVER";
     public static final int MODE_LIST_LOOP = 0;
@@ -55,11 +55,6 @@ public class MusicActivity
         Intent i = new Intent(context, MusicActivity.class);
         i.putExtra("music", m);
         context.startActivity(i);
-    }
-
-    @Override
-    protected MusicPresenterImp createPresenter() {
-        return new MusicPresenterImp(this);
     }
 
     @Override
