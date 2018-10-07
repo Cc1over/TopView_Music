@@ -21,47 +21,48 @@ import java.util.List;
 
 public class Utility {
 
-    public static List<RecommendRadio> analyzeRecommendRadio(String json){
+    public static List<RecommendRadio> analyzeRecommendRadio(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<RecommendRadio>>() {
         }.getType());
     }
 
-    public static NetMusic analyzeNetMusic(String json){
-
+    public static NetMusic analyzeNetMusic(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, NetMusic.class);
     }
 
-    public static List<HotWord> analyzeHotWord(String json){
-         Gson gson = new Gson();
+    public static List<HotWord> analyzeHotWord(String json) {
+        Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<HotWord>>() {
         }.getType());
     }
 
-    public static List<SearchMerge.AlbumInfo> analyzeSearchMergeAlbumInfo(String json){
+    public static List<SearchMerge.AlbumInfo> analyzeSearchMergeAlbumInfo(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<SearchMerge.AlbumInfo>>() {
         }.getType());
     }
 
-    public static List<SearchMerge.ArtistInfo> analyzeSearchMergeArtistInfo(String json){
+    public static List<SearchMerge.ArtistInfo> analyzeSearchMergeArtistInfo(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<SearchMerge.ArtistInfo>>() {
         }.getType());
     }
 
-    public static List<SearchMerge.SongInfo> analyzeSearchMergeSongInfo(String json){
+    public static List<SearchMerge.SongInfo> analyzeSearchMergeSongInfo(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<SearchMerge.SongInfo>>() {
         }.getType());
     }
 
-    public static List<Billboard> analyzeBillboard(String json){
+    public static List<Billboard> analyzeBillboard(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<Billboard>>() {
         }.getType());
     }
 
-    public static List<Channel> analyzeChannel(String json){
+    public static List<Channel> analyzeChannel(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<Channel>>() {
         }.getType());

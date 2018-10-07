@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.hebaiyi.www.topviewmusic.bean.HotWord;
+import com.hebaiyi.www.topviewmusic.bean.NetMusic;
 import com.hebaiyi.www.topviewmusic.bean.SearchMerge;
 
 import java.util.List;
@@ -12,14 +13,14 @@ public class SearchContract {
 
     public interface SearchView {
         void showHotWords(List<HotWord> hotWords);
-
         void showSearchMerge(MergeSet ms);
+        void showNetMusic(NetMusic nm);
     }
 
     public interface SearchPresenter {
         void obtainHotWords();
-
         void obtainSearchMerge(String query, int pageNo, int pageSize);
+        void obtainNetMusic(String songId);
     }
 
 

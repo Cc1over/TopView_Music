@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.hebaiyi.www.topviewmusic.base.presenter.BasePresenter;
 import com.hebaiyi.www.topviewmusic.bean.HotWord;
+import com.hebaiyi.www.topviewmusic.bean.NetMusic;
 import com.hebaiyi.www.topviewmusic.bean.SearchMerge;
 import com.hebaiyi.www.topviewmusic.search.contract.SearchContract;
 import com.hebaiyi.www.topviewmusic.search.model.SearchModel;
@@ -22,6 +23,9 @@ public class SearchPresenterImp
 
     private static final int OBTAIN_SEARCHMERGE_SUCCESS = 0XCCCC;
     private static final int OBTAIN_SEARCHMERGE_FAIL = 0XDDDD;
+
+    private static final int OBTAIN_NETMUSIC_SUCCESS = 0XFFFF;
+    private static final int OBTAIN_NETMUSIC_FAIL = 0XEEEE;
 
     private SearchContract.SearchView mView;
     private SearchModel mModel;
@@ -76,6 +80,26 @@ public class SearchPresenterImp
         });
     }
 
+    @Override
+    public void obtainNetMusic(String songId) {
+        mModel.loadNetMusic(songId, new SearchModel.NetMusicCallback() {
+            @Override
+            public void onSuccess(NetMusic nm) {
+                Message msg = Message.obtain();
+                msg.what = OBTAIN_NETMUSIC_SUCCESS;
+                msg.obj = nm;
+                mHandler.sendMessage(msg);
+            }
+
+            @Override
+            public void onFail(Exception e) {
+                Message msg = Message.obtain();
+                msg.what = OBTAIN_NETMUSIC_FAIL;
+                mHandler.sendMessage(msg);
+            }
+        });
+    }
+
 
     private static class SearchHandler extends Handler {
 
@@ -105,6 +129,13 @@ public class SearchPresenterImp
                     break;
                 case OBTAIN_SEARCHMERGE_FAIL:
                     sv.showSearchMerge(null);
+                    break;
+
+                case OBTAIN_NETMUSIC_SUCCESS:
+                    sv.showNetMusic((NetMusic) msg.obj);
+                    break;
+                case OBTAIN_NETMUSIC_FAIL:
+                    sv.showNetMusic(null);
                     break;
             }
         }

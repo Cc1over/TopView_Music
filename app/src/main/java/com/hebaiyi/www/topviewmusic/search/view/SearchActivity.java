@@ -8,19 +8,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
 import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.bean.HotWord;
+import com.hebaiyi.www.topviewmusic.bean.NetMusic;
 import com.hebaiyi.www.topviewmusic.bean.SearchMerge;
+import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
 import com.hebaiyi.www.topviewmusic.music.view.BottomFragment;
 import com.hebaiyi.www.topviewmusic.search.contract.SearchContract;
 import com.hebaiyi.www.topviewmusic.search.presenter.SearchPresenterImp;
+import com.hebaiyi.www.topviewmusic.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +55,7 @@ public class SearchActivity
     private ResultFragment mResultFragment;
     private String currQuery;
     private BottomFragment mBottomFragment;
+    private MusicManager mManager;
 
     public static void actionStart(Context context) {
         Intent i = new Intent(context, SearchActivity.class);
@@ -84,6 +90,7 @@ public class SearchActivity
     protected void initVariables() {
         mHotFragment = new HotFragment();
         mResultFragment = new ResultFragment();
+        mManager = MusicManager.getInstance();
         EventBus.getDefault().register(mResultFragment);
     }
 
@@ -94,12 +101,21 @@ public class SearchActivity
 
     @Subscribe
     public void onEvent(SearchMerge.SongInfo info) {
-        if(info==null){
+        if (info == null) {
             return;
         }
-//        Music music = new Music(info.getPicSmall(), info.getTitle(),
-//                info.getAuthor(),true,null);
-//        mBottomFragment.setBottomSong(music);
+        obtainPresenter().obtainNetMusic(info.getSongId());
+    }
+
+    @Override
+    public void showNetMusic(NetMusic nm) {
+        if (nm == null) {
+            ToastUtil.showToast("无网络，暂时无法播放在线歌曲", Toast.LENGTH_SHORT);
+            return;
+        }
+        Music music = nm.createMusic(true);
+        mBottomFragment.setBottomSong(music);
+        mManager.setSong(music.getUrls().get(0));
     }
 
     public void search(String query) {

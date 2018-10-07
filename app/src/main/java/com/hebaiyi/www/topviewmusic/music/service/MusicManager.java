@@ -96,7 +96,7 @@ public class MusicManager {
     }
 
     public void setSong(String songUrl) {
-        if(songUrl.isEmpty()){
+        if(songUrl==null||"".equals(songUrl)){
             return;
         }
         if (isConnected) {

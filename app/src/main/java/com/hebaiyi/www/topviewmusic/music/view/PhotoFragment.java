@@ -1,6 +1,7 @@
 package com.hebaiyi.www.topviewmusic.music.view;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,12 +29,6 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     private ObjectAnimator mRotationAnim;
     private MusicActivity mParentActivity;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mParentActivity = (MusicActivity) getActivity();
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,6 +43,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
             mTvStandard.setOnClickListener(this);
             mTvMv.setOnClickListener(this);
             mTvEffect.setOnClickListener(this);
+            Log.e("onCreateView", getArguments()+"");
             if (getArguments() != null) {
                 String url = getArguments().getString("url");
                 setPhoto(url);
@@ -60,11 +56,25 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         return mView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mParentActivity = (MusicActivity) getActivity();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mParentActivity = null;
+    }
+
     public void setPhoto(String url) {
         if (url == null || "".equals(url)) {
             return;
         }
-        Glide.with(getContext()).load(url).into(mIvPhoto);
+        if (mParentActivity != null) {
+            Glide.with(getContext()).load(url).into(mIvPhoto);
+        }
     }
 
     public void setRotate(boolean isRotate) {

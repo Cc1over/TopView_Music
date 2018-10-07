@@ -15,7 +15,7 @@ public class NetMusic {
 
     public Music createMusic(boolean isPlaying) {
         Music music = new Music();
-        music.setPicUrl(songInfo.picBig);
+        music.setPicUrl(songInfo.picPremium);
         music.setName(songInfo.title);
         music.setSinger(songInfo.artist);
         music.setPlaying(isPlaying);
@@ -776,7 +776,7 @@ public class NetMusic {
         private String hash;
 
         @SerializedName("preload")
-        private int preload;
+        private String preload;
 
         @SerializedName("can_load")
         private boolean canLoad;
@@ -849,11 +849,11 @@ public class NetMusic {
             this.hash = hash;
         }
 
-        public int getPreload() {
+        public String getPreload() {
             return preload;
         }
 
-        public void setPreload(int preload) {
+        public void setPreload(String preload) {
             this.preload = preload;
         }
 

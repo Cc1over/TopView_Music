@@ -57,8 +57,9 @@ public class SearchModel {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-
-                callback.onSuccess();
+                String data = response.body().string();
+                NetMusic nm = Utility.analyzeNetMusic(data);
+                callback.onSuccess(nm);
             }
         });
     }

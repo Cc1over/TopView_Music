@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -92,9 +93,11 @@ public class MusicActivity
             } else {
                 mIvPlay.setImageResource(R.drawable.music_play);
             }
+            if(mMusic.getDuration()!=0){
+                mTvTotalTime.setText(mMusic.getDuration());
+            }
         }
     }
-
 
 
     @Override
@@ -138,15 +141,11 @@ public class MusicActivity
                 ToastUtil.showToast("随机播放", Toast.LENGTH_SHORT);
                 break;
         }
-//        Intent i = new Intent(RECEIVER_ACTION);
-//        i.putExtra("curr_mode", currMode);
-//        sendBroadcast(i);
     }
 
     private void showList() {
 
     }
-
 
     private void nextSong() {
         Intent i = new Intent(RECEIVER_ACTION);
@@ -225,6 +224,9 @@ public class MusicActivity
         if (currFragment == FRAGMENT_LYRICS || currFragment == 0) {
             transaction.replace(R.id.music_flyt_center, mPhotoFragment);
             currFragment = FRAGMENT_PHOTO;
+            Bundle data = new Bundle();
+            data.putString("url", mMusic.getPicUrl());
+            mPhotoFragment.setArguments(data);
             transaction.commit();
         }
     }
