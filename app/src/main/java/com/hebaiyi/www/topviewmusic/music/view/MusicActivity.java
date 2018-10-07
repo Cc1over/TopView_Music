@@ -3,11 +3,9 @@ package com.hebaiyi.www.topviewmusic.music.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -18,26 +16,26 @@ import android.widget.Toast;
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
 import com.hebaiyi.www.topviewmusic.bean.Music;
-import com.hebaiyi.www.topviewmusic.local.view.LocalMusicListActivity;
 import com.hebaiyi.www.topviewmusic.music.contract.MusicContract;
 import com.hebaiyi.www.topviewmusic.music.presenter.MusicPresenterImp;
 import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
 import com.hebaiyi.www.topviewmusic.util.ToastUtil;
 
-import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 public class MusicActivity
         extends PresenterActivity<MusicContract.MusicView, MusicPresenterImp>
         implements MusicContract.MusicView, View.OnClickListener {
 
+    public static final String RECEIVER_ACTION = "com.hebaiyi.www.music.MusicActivity.RECEIVER";
     public static final int MODE_LIST_LOOP = 0;
     public static final int MODE_SINGER_LOOP = 1;
     public static final int MODE_SHUFFLE_PLAYBACK = 2;
-
+    public static final int NEXT_SONG = 0X55EF;
+    public static final int PAST_SONG = 0X10FF;
+    public static int currMode = MODE_LIST_LOOP;
     private static final int FRAGMENT_PHOTO = 0XCCCC;
     private static final int FRAGMENT_LYRICS = 0XDDDD;
-
     private Toolbar mTbTitle;
     private ImageView mIvMode, mIvPlay, mIvList, mIvNext, mIvPast;
     private FrameLayout mFlytCenter;
@@ -46,7 +44,6 @@ public class MusicActivity
     private Music mMusic;
     private boolean isPlaying;
     private int currFragment;
-    private int currMode = MODE_LIST_LOOP;
     private PhotoFragment mPhotoFragment;
     private LyricsFragment mLyricsFragment;
     private TextView mTvName, mTvSinger;
@@ -89,7 +86,6 @@ public class MusicActivity
             mTvName.setText(mMusic.getName());
             mTvSinger.setText(mMusic.getSinger());
             mPhotoFragment.setPhoto(mMusic.getPicUrl());
-            Log.e("duration", mMusic.getDuration() + "");
             isPlaying = mMusic.isPlaying();
             if (isPlaying) {
                 mIvPlay.setImageResource(R.drawable.music_playing);
@@ -98,6 +94,7 @@ public class MusicActivity
             }
         }
     }
+
 
 
     @Override
@@ -141,18 +138,26 @@ public class MusicActivity
                 ToastUtil.showToast("随机播放", Toast.LENGTH_SHORT);
                 break;
         }
+//        Intent i = new Intent(RECEIVER_ACTION);
+//        i.putExtra("curr_mode", currMode);
+//        sendBroadcast(i);
     }
 
     private void showList() {
 
     }
 
-    private void nextSong() {
 
+    private void nextSong() {
+        Intent i = new Intent(RECEIVER_ACTION);
+        i.putExtra("operate", NEXT_SONG);
+        sendBroadcast(i);
     }
 
     private void pastSong() {
-
+        Intent i = new Intent(RECEIVER_ACTION);
+        i.putExtra("operate", PAST_SONG);
+        sendBroadcast(i);
     }
 
     private void processPlayback() {
@@ -171,10 +176,6 @@ public class MusicActivity
         }
     }
 
-    public boolean isPlaying() {
-        return isPlaying;
-    }
-
     @Override
     protected void initVariables() {
         mPhotoFragment = new PhotoFragment();
@@ -191,8 +192,7 @@ public class MusicActivity
 
     }
 
-
-    @Subscribe(sticky = true,priority = 1)
+    @Subscribe(sticky = true, priority = 1)
     public void onChangeEvent(Music music) {
         mMusic = music;
         setData();
@@ -243,6 +243,10 @@ public class MusicActivity
                 break;
         }
         return true;
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
     }
 
 }

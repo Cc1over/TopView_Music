@@ -8,6 +8,7 @@ import com.hebaiyi.www.topviewmusic.bean.FoucsPic;
 import com.hebaiyi.www.topviewmusic.bean.GeDan;
 import com.hebaiyi.www.topviewmusic.bean.HotGeDan;
 import com.hebaiyi.www.topviewmusic.bean.HotWord;
+import com.hebaiyi.www.topviewmusic.bean.NetMusic;
 import com.hebaiyi.www.topviewmusic.bean.RecommendRadio;
 import com.hebaiyi.www.topviewmusic.bean.SearchMerge;
 import com.hebaiyi.www.topviewmusic.bean.Song;
@@ -24,6 +25,10 @@ public class Utility {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<RecommendRadio>>() {
         }.getType());
+    }
+
+    public static NetMusic analyzeNetMusic(String json){
+
     }
 
     public static List<HotWord> analyzeHotWord(String json){

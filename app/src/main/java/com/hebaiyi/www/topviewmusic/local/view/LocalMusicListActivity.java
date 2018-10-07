@@ -1,28 +1,30 @@
 package com.hebaiyi.www.topviewmusic.local.view;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.PermissionActivity;
 import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
-import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.bean.LocalMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.local.adapter.LocalMusicListAdapter;
 import com.hebaiyi.www.topviewmusic.local.contract.LocalMusicListContract;
 import com.hebaiyi.www.topviewmusic.local.presenter.LocalMusicListPresenterImp;
 import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
 import com.hebaiyi.www.topviewmusic.music.view.BottomFragment;
 import com.hebaiyi.www.topviewmusic.music.view.MusicActivity;
+import com.hebaiyi.www.topviewmusic.util.MatheUtil;
 import com.hebaiyi.www.topviewmusic.widget.SidebarView;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -32,6 +34,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -49,6 +52,7 @@ public class LocalMusicListActivity
     private List<LocalMusic> mMusics;
     private int currPosition;
     private MusicManager mManager = MusicManager.getInstance();
+    private MusicReceiver mReceiver;
 
     public static void actionStart(Context context) {
         Intent i = new Intent(context, LocalMusicListActivity.class);
@@ -127,25 +131,40 @@ public class LocalMusicListActivity
         adapter.setLocalMusicListListener(new LocalMusicListAdapter.LocalMusicListListener() {
             @Override
             public void onClick(int position) {
-                currPosition = position;
-                mManager.setSong(setBottomSong(position).getUrl());
-            }
-        });
-        mManager.setOnMusicCompleteListener(new MusicManager.OnMusicCompleteListener() {
-            @Override
-            public void onComplete() {
-                if (currPosition + 1 == mMusics.size()) {
-                    currPosition = 0;
-                    Music music = setBottomSong(currPosition);
-                    mManager.setSong(music.getUrl());
-                    EventBus.getDefault().postSticky(music);
-                    return;
+                if (currPosition == position && currPosition != 0) {
+                    MusicActivity.actionStart(
+                            LocalMusicListActivity.this, setBottomSong(currPosition));
+                } else {
+                    currPosition = position;
+                    mManager.setSong(setBottomSong(position).getUrl());
                 }
-                Music music = setBottomSong(currPosition + 1);
-                mManager.setSong(music.getUrl());
-                EventBus.getDefault().postSticky(music);
             }
         });
+
+    }
+
+    private void listLoop() {
+        if (currPosition + 1 == mMusics.size()) {
+            currPosition = 0;
+            postMusic(currPosition);
+            return;
+        }
+        postMusic(++currPosition);
+    }
+
+    private void singleLoop() {
+        postMusic(currPosition);
+    }
+
+    private void shufflePlayback() {
+        currPosition = MatheUtil.createRandomNumber(0, mMusics.size() - 1);
+        postMusic(currPosition);
+    }
+
+    private void postMusic(int position) {
+        Music music = setBottomSong(position);
+        mManager.setSong(music.getUrl());
+        EventBus.getDefault().postSticky(music);
     }
 
     private Music setBottomSong(int position) {
@@ -155,15 +174,22 @@ public class LocalMusicListActivity
         return m;
     }
 
+    private void registered() {
+        mReceiver = new MusicReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MusicActivity.RECEIVER_ACTION);
+        registerReceiver(mReceiver, filter);
+    }
+
     @Override
     protected void initVariables() {
-        EventBus.getDefault().register(new MusicActivity());
+        registered();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(new MusicActivity());
+        unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -176,6 +202,28 @@ public class LocalMusicListActivity
             obtainPresenter().obtainLocalMusicList(getApplicationContext());
         }
     }
+
+    private void nextSong(boolean manual) {
+        switch (MusicActivity.currMode) {
+            case MusicActivity.MODE_LIST_LOOP:
+                listLoop();
+                break;
+            case MusicActivity.MODE_SINGER_LOOP:
+                if (manual) {
+                    listLoop();
+                } else {
+                    singleLoop();
+                }
+                break;
+            case MusicActivity.MODE_SHUFFLE_PLAYBACK:
+                shufflePlayback();
+                break;
+            default:
+                listLoop();
+                break;
+        }
+    }
+
 
     @Override
     protected void initEvents() {
@@ -190,7 +238,33 @@ public class LocalMusicListActivity
                 }
             }
         });
+        mManager.setOnMusicCompleteListener(new MusicManager.OnMusicCompleteListener() {
+            @Override
+            public void onComplete() {
+                nextSong(false);
+            }
+        });
     }
 
+    private class MusicReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int operate = intent.getIntExtra("operate", -1);
+            if (operate != -1) {
+                if (operate == MusicActivity.NEXT_SONG) {
+                    nextSong(true);
+                }
+                if (operate == MusicActivity.PAST_SONG) {
+                    if (currPosition - 1 < 0) {
+                        currPosition = mMusics.size() - 1;
+                        postMusic(currPosition);
+                        return;
+                    }
+                    postMusic(--currPosition);
+                }
+            }
+        }
+    }
 
 }

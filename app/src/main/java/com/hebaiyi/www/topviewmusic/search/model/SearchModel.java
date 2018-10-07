@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.hebaiyi.www.topviewmusic.bean.HotWord;
+import com.hebaiyi.www.topviewmusic.bean.Music;
+import com.hebaiyi.www.topviewmusic.bean.NetMusic;
 import com.hebaiyi.www.topviewmusic.bean.SearchMerge;
 import com.hebaiyi.www.topviewmusic.util.HttpUtil;
 import com.hebaiyi.www.topviewmusic.util.Utility;
@@ -45,6 +47,21 @@ public class SearchModel {
         });
     }
 
+    public void loadNetMusic(String songId, final NetMusicCallback callback) {
+        String address = MusicApi.Song.songInfo(songId);
+        HttpUtil.asyncRequest(address, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                callback.onFail(e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                callback.onSuccess();
+            }
+        });
+    }
 
     public void loadHotWord(final HotWordCallback callback) {
         String address = MusicApi.Search.hotWord();
@@ -57,9 +74,9 @@ public class SearchModel {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response)
                     throws IOException {
-               String data = response.body().string();
-               String json = Utility.obtainDesignationJson(data,"result");
-               callback.onSuccess(Utility.analyzeHotWord(json));
+                String data = response.body().string();
+                String json = Utility.obtainDesignationJson(data, "result");
+                callback.onSuccess(Utility.analyzeHotWord(json));
             }
         });
     }
@@ -79,6 +96,14 @@ public class SearchModel {
                        List<SearchMerge.SongInfo> sis);
 
         void onFail(Exception e);
+    }
+
+    public interface NetMusicCallback {
+
+        void onSuccess(NetMusic nm);
+
+        void onFail(Exception e);
+
     }
 
 
