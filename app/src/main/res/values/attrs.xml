@@ -17,5 +17,21 @@
         <attr name="textPaddingV" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="LyricsView">
+        <attr name="min_seek_fired_offset" format="dimension" />
+        <attr name="high_line_row_color" format="color" />
+        <attr name="normal_color" format="color" />
+        <attr name="seek_line_color" format="color" />
+        <attr name="seek_line_text_color" format="color" />
+        <attr name="seek_line_text_size" format="dimension" />
+        <attr name="lyrics_text_size" format="dimension"/>
+        <attr name="padding_Y" format="dimension" />
+        <attr name="seek_line_padding_X" format="dimension" />
+        <attr name="min_lyrics_text_size" format="dimension" />
+        <attr name="max_lyrics_text_size" format="dimension" />
+        <attr name="min_seek_line_text_size" format="dimension"/>
+        <attr name="max_seeK_line_text_size" format="dimension" />
+    </declare-styleable>
+
 
 </resources>

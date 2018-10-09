@@ -3,7 +3,6 @@ package com.hebaiyi.www.topviewmusic.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.hebaiyi.www.topviewmusic.music.contract.MusicContract;
 
 import java.util.List;
 

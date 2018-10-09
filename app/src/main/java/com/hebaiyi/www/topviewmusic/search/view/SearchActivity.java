@@ -187,10 +187,14 @@ public class SearchActivity
             return;
         }
         if (currFragment == FRAGMENT_RESULT && currState == SEARCH_RESET) {
-            EventBus.getDefault().post(data);
+            if (data != null) {
+                EventBus.getDefault().post(data);
+            }
         }
         if (currFragment == FRAGMENT_RESULT && currState == SEARCH_READD) {
-            EventBus.getDefault().post(data);
+            if (data != null) {
+                EventBus.getDefault().post(data);
+            }
         }
     }
 

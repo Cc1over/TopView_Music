@@ -19,6 +19,7 @@
     <com.hebaiyi.www.topviewmusic.widget.FlowLayout
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         app:textSize="18sp"
         android:layout_marginBottom="10dp"
         android:background="@color/white"

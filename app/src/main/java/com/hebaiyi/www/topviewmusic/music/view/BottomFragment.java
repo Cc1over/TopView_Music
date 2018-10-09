@@ -78,6 +78,7 @@ public class BottomFragment extends Fragment implements View.OnClickListener {
         mMusic.setSinger(music.getSinger());
         mMusic.setUrl(music.getUrl());
         mMusic.setPlaying(music.isPlaying());
+        mMusic.setLyrics(music.getLyrics());
         isPlaying = music.isPlaying();
         if (music == null) {
             return;

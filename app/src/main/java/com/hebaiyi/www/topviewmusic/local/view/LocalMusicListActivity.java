@@ -53,6 +53,7 @@ public class LocalMusicListActivity
     private int currPosition;
     private MusicManager mManager = MusicManager.getInstance();
     private MusicReceiver mReceiver;
+    private MusicManager.MusicObserver mObserver;
 
     public static void actionStart(Context context) {
         Intent i = new Intent(context, LocalMusicListActivity.class);
@@ -131,6 +132,9 @@ public class LocalMusicListActivity
         adapter.setLocalMusicListListener(new LocalMusicListAdapter.LocalMusicListListener() {
             @Override
             public void onClick(int position) {
+                if (mMusics.size() == 0) {
+                    return;
+                }
                 if (currPosition == position && currPosition != 0) {
                     MusicActivity.actionStart(
                             LocalMusicListActivity.this, setBottomSong(currPosition));
@@ -184,12 +188,24 @@ public class LocalMusicListActivity
     @Override
     protected void initVariables() {
         registered();
+        mObserver = new MusicManager.MusicObserver() {
+            @Override
+            public void OnPrepare() {
+
+            }
+
+            @Override
+            public void onComplete() {
+                nextSong(false);
+            }
+        };
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
+        mManager.detach(mObserver);
     }
 
     @Override
@@ -238,12 +254,7 @@ public class LocalMusicListActivity
                 }
             }
         });
-        mManager.setOnMusicCompleteListener(new MusicManager.OnMusicCompleteListener() {
-            @Override
-            public void onComplete() {
-                nextSong(false);
-            }
-        });
+        mManager.attach(mObserver);
     }
 
     private class MusicReceiver extends BroadcastReceiver {

@@ -13,13 +13,17 @@ import android.os.RemoteException;
 import com.hebaiyi.www.topviewmusic.app.TopViewMusicApplication;
 import com.hebaiyi.www.topviewmusic.music.IMusicManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MusicManager {
 
     private IMusicManager mManager;
     private boolean isConnected = false;
-    private MusicReceiver mReceiver;
+    private CompleteReceiver mCompleteReceiver;
+    private PrepareReceiver mPrepareReceiver;
     private Context context = TopViewMusicApplication.getContext();
-    private OnMusicCompleteListener mListener;
+    private List<MusicObserver> mMusicObservers = new ArrayList<>();
 
     private static class Singleton {
         @SuppressLint("StaticFieldLeak")
@@ -48,11 +52,15 @@ public class MusicManager {
         registered();
     }
 
-    private void registered(){
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MusicService.MUSIC_BROADCAST_RECEIVER_ACTION);
-        mReceiver = new MusicReceiver();
-        context.registerReceiver(mReceiver, filter);
+    private void registered() {
+        IntentFilter cfilter = new IntentFilter();
+        cfilter.addAction(MusicService.MUSIC_BROADCAST_RECEIVER_COMPLETE_ACTION);
+        mCompleteReceiver = new CompleteReceiver();
+        context.registerReceiver(mCompleteReceiver, cfilter);
+        IntentFilter pfilter = new IntentFilter();
+        pfilter.addAction(MusicService.MUSIC_BROADCAST_RECEIVER_PREPARED_ACTION);
+        mPrepareReceiver = new PrepareReceiver();
+        context.registerReceiver(mPrepareReceiver, pfilter);
     }
 
     public void start() {
@@ -63,6 +71,18 @@ public class MusicManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int getCurrentPosition() {
+        if (isConnected) {
+            try {
+                return mManager.getCurrentPosition();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+        return -1;
     }
 
     public void stop() {
@@ -96,7 +116,7 @@ public class MusicManager {
     }
 
     public void setSong(String songUrl) {
-        if(songUrl==null||"".equals(songUrl)){
+        if (songUrl == null || "".equals(songUrl)) {
             return;
         }
         if (isConnected) {
@@ -108,23 +128,39 @@ public class MusicManager {
         }
     }
 
-    private class MusicReceiver extends BroadcastReceiver {
+    private class CompleteReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mListener != null) {
-                mListener.onComplete();
+            for (int i = 0; i < mMusicObservers.size(); i++) {
+                mMusicObservers.get(i).onComplete();
             }
         }
-
     }
 
-    public interface OnMusicCompleteListener {
+    private class PrepareReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            for (int i = 0; i < mMusicObservers.size(); i++) {
+                mMusicObservers.get(i).OnPrepare();
+            }
+        }
+    }
+
+    public void attach(MusicObserver observer) {
+        mMusicObservers.add(observer);
+    }
+
+    public void detach(MusicObserver observer) {
+        mMusicObservers.remove(observer);
+    }
+
+    public interface MusicObserver {
+
+        void OnPrepare();
         void onComplete();
     }
 
-    public void setOnMusicCompleteListener(OnMusicCompleteListener oml) {
-        mListener = oml;
-    }
 
 }

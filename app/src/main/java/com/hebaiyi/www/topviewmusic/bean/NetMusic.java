@@ -1,5 +1,7 @@
 package com.hebaiyi.www.topviewmusic.bean;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ public class NetMusic {
         music.setName(songInfo.title);
         music.setSinger(songInfo.artist);
         music.setPlaying(isPlaying);
+        music.setLyrics(songInfo.lrclink);
+        Log.e("createMusic", songInfo.lrclink);
         List<String> urls = new ArrayList<>();
         for (int i = 0; i < songUrl.url.size(); i++) {
             urls.add(songUrl.url.get(i).showLink);

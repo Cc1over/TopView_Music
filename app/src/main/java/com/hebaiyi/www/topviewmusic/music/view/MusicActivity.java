@@ -16,10 +16,7 @@ import android.widget.Toast;
 
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.BottomActivity;
-import com.hebaiyi.www.topviewmusic.base.activity.PresenterActivity;
 import com.hebaiyi.www.topviewmusic.bean.Music;
-import com.hebaiyi.www.topviewmusic.music.contract.MusicContract;
-import com.hebaiyi.www.topviewmusic.music.presenter.MusicPresenterImp;
 import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
 import com.hebaiyi.www.topviewmusic.util.ToastUtil;
 
@@ -207,11 +204,14 @@ public class MusicActivity
 
     }
 
-    private void replaceFragment() {
+    public void replaceFragment() {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (currFragment == FRAGMENT_PHOTO) {
             transaction.replace(R.id.music_flyt_center, mLyricsFragment);
+            Bundle data = new Bundle();
+            data.putString("lyrics_path", mMusic.getLyrics());
+            mLyricsFragment.setArguments(data);
             currFragment = FRAGMENT_LYRICS;
             transaction.commit();
             return;

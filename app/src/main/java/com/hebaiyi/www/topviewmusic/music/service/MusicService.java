@@ -1,11 +1,7 @@
 package com.hebaiyi.www.topviewmusic.music.service;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -17,8 +13,10 @@ import java.io.IOException;
 
 public class MusicService extends Service {
 
-    public static final String MUSIC_BROADCAST_RECEIVER_ACTION
+    public static final String MUSIC_BROADCAST_RECEIVER_COMPLETE_ACTION
             = "TopViewMusic.music.service.MusicService.complete";
+    public static final String MUSIC_BROADCAST_RECEIVER_PREPARED_ACTION
+            = "TopViewMusic.music.service.MusicService.prepared";
     private IMusicManager.Stub mManager;
     private MediaPlayer mPlayer;
     private boolean needToReset = false;
@@ -34,7 +32,7 @@ public class MusicService extends Service {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                Intent i = new Intent(MUSIC_BROADCAST_RECEIVER_ACTION);
+                Intent i = new Intent(MUSIC_BROADCAST_RECEIVER_COMPLETE_ACTION);
                 sendBroadcast(i);
             }
         });
@@ -74,6 +72,8 @@ public class MusicService extends Service {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
                                 mPlayer.start();
+                                Intent i = new Intent(MUSIC_BROADCAST_RECEIVER_PREPARED_ACTION);
+                                sendBroadcast(i);
                             }
                         });
                         mPlayer.prepareAsync();
@@ -98,7 +98,6 @@ public class MusicService extends Service {
 
             @Override
             public void pause() throws RemoteException {
-                Log.e("pause: ", "pause()");
                 if (mPlayer.isPlaying()) {
                     mPlayer.pause();
                 }
@@ -112,6 +111,14 @@ public class MusicService extends Service {
             @Override
             public void setCurrTime(int currTime) throws RemoteException {
                 Log.e("setCurrTime: ", currTime + "");
+            }
+
+            @Override
+            public int getCurrentPosition() throws RemoteException {
+                if (mPlayer.isPlaying()) {
+                    return mPlayer.getCurrentPosition();
+                }
+                return -1;
             }
         };
     }
