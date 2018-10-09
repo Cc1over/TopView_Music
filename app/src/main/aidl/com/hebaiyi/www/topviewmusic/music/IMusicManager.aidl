@@ -8,6 +8,7 @@ interface IMusicManager {
     void pause();
     void stop();
     void setCurrTime(int currTime);
-    int getCurrentPosition();
+    float getProgress();
+    int getDuration();
 
 }

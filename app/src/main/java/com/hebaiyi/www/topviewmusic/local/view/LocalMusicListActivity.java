@@ -166,6 +166,9 @@ public class LocalMusicListActivity
     }
 
     private void postMusic(int position) {
+        if (position >= mMusics.size()) {
+            return;
+        }
         Music music = setBottomSong(position);
         mManager.setSong(music.getUrl());
         EventBus.getDefault().postSticky(music);

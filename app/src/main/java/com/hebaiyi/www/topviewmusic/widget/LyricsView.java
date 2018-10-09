@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Scroller;
@@ -319,7 +320,7 @@ public class LyricsView extends View {
         }
     }
 
-    public void setLrc(List<Lyrics> lrcRows) {
+    public void setLyrics(List<Lyrics> lrcRows) {
         mLrcRows = lrcRows;
         invalidate();
     }

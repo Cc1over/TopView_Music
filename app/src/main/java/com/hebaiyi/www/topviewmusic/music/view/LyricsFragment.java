@@ -28,6 +28,8 @@ public class LyricsFragment
     private MusicActivity mParentActivity;
     private MusicManager mManager;
     private MusicManager.MusicObserver mObserver;
+    private long currTime;
+    private boolean isStart = true;
 
     @Override
     protected LyricsPresenterImp createPresenter() {
@@ -58,6 +60,15 @@ public class LyricsFragment
             obtainPresenter().obtainLyrics(path);
         }
         mManager.attach(mObserver);
+        mLyricsView.setListener(new LyricsView.ILrcViewListener() {
+            @Override
+            public void onLrcSeeked(int position, Lyrics lrcRow) {
+                currTime = lrcRow.getTime();
+                mManager.setCurrTime((int) lrcRow.getTime());
+                mParentActivity.setCurrTime(lrcRow.getTime());
+            }
+        });
+        mLyricsView.seekLrcToTime(currTime);
     }
 
     @Override
@@ -66,59 +77,74 @@ public class LyricsFragment
             path = getArguments().getString("lyrics_path", null);
         }
         mManager = MusicManager.getInstance();
+        if (mTimer == null) {
+            mTimer = new Timer();
+            mTask = new LyricsTask();
+            mTimer.scheduleAtFixedRate(mTask, 0, mPalyTimerDuration);
+        }
         mObserver = new MusicManager.MusicObserver() {
             @Override
             public void OnPrepare() {
-                if (mTimer == null) {
-                    mTimer = new Timer();
-                    mTask = new LyricsTask();
-                    mTimer.scheduleAtFixedRate(mTask, 0, mPalyTimerDuration);
-                }
+
             }
 
             @Override
             public void onComplete() {
-                if (mTimer != null) {
-                    mTimer.cancel();
-                    mTimer = null;
-                }
+                currTime = 0;
             }
         };
+    }
+
+    public void setCurrTime(long currTime){
+        this.currTime = currTime;
+        mLyricsView.seekLrcToTime(currTime);
+    }
+
+    public void isLyricsStart(boolean isStart){
+        this.isStart = isStart;
     }
 
     @Override
     public void showLyrics(List<Lyrics> lyricses) {
         mLyricsView.attach(this);
-        mLyricsView.setLrc(lyricses);
+        mLyricsView.setLyrics(lyricses);
     }
 
     public void replace() {
         mParentActivity.replaceFragment();
     }
 
+
     private class LyricsTask extends TimerTask {
 
         @Override
         public void run() {
-            final long timePassed = mManager.getCurrentPosition();
-            getActivity().runOnUiThread(new Runnable() {
-                public void run() {
-                    mLyricsView.seekLrcToTime(timePassed);
-                }
-            });
-            mLyricsView.setListener(new LyricsView.ILrcViewListener() {
-                @Override
-                public void onLrcSeeked(int position, Lyrics lrcRow) {
-                    mManager.setCurrTime((int) lrcRow.getTime());
-                }
-            });
+            if (isStart) {
+                currTime += mPalyTimerDuration;
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        mLyricsView.seekLrcToTime(currTime);
+                    }
+                });
+            }
         }
-
     }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        }
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mManager.detach(mObserver);
     }
+
 }

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +19,11 @@ import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.BottomActivity;
 import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
+import com.hebaiyi.www.topviewmusic.util.TimeUtil;
 import com.hebaiyi.www.topviewmusic.util.ToastUtil;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.greenrobot.event.Subscribe;
 
@@ -46,7 +51,12 @@ public class MusicActivity
     private LyricsFragment mLyricsFragment;
     private TextView mTvName, mTvSinger;
     private TextView mTvCurrTime, mTvTotalTime;
+    private SeekBar mSbProgress;
     private MusicManager mManager;
+    private Timer mTimer;
+    private MusicManager.MusicObserver mObserver;
+    private ProgressTask mTask;
+    private long currTime;
 
     public static void actionStart(Context context, Music m) {
         Intent i = new Intent(context, MusicActivity.class);
@@ -69,9 +79,11 @@ public class MusicActivity
         mTvSinger = findViewById(R.id.music_tv_singer);
         mTvCurrTime = findViewById(R.id.music_tv_curr_time);
         mTvTotalTime = findViewById(R.id.music_tv_total_time);
+        mSbProgress = findViewById(R.id.music_seek_bar_progress);
         setData();
         initToolbar(mTbTitle, R.drawable.back_icon);
         replaceFragment();
+        mSbProgress.setMax(100);
     }
 
     private void setData() {
@@ -85,8 +97,8 @@ public class MusicActivity
             } else {
                 mIvPlay.setImageResource(R.drawable.music_play);
             }
-            if(mMusic.getDuration()!=0){
-                mTvTotalTime.setText(mMusic.getDuration());
+            if (mManager.getDuration() != -1) {
+                mTvTotalTime.setText(TimeUtil.conversionToStr(mManager.getDuration()));
             }
         }
     }
@@ -165,6 +177,7 @@ public class MusicActivity
         } else {
             mManager.start();
         }
+        mLyricsFragment.isLyricsStart(isPlaying);
     }
 
     @Override
@@ -176,6 +189,32 @@ public class MusicActivity
             isPlaying = mMusic.isPlaying();
         }
         mManager = MusicManager.getInstance();
+        if (mTimer == null) {
+            mTimer = new Timer();
+            mTask = new ProgressTask();
+            mTimer.scheduleAtFixedRate(mTask, 0, 10);
+        }
+        mObserver = new MusicManager.MusicObserver() {
+            @Override
+            public void OnPrepare() {
+            }
+
+            @Override
+            public void onComplete() {
+                currTime = 0;
+            }
+        };
+        mManager.attach(mObserver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        }
+        mManager.detach(mObserver);
     }
 
     @Override
@@ -197,6 +236,32 @@ public class MusicActivity
         mIvNext.setOnClickListener(this);
         mIvPast.setOnClickListener(this);
         mIvPlay.setOnClickListener(this);
+        mSbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    float x = progress * 1.0f / 100;
+                    currTime = (long) (x * mManager.getDuration());
+                    mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                float x = seekBar.getProgress() * 1.0f / 100;
+                seekBar.setProgress(seekBar.getProgress());
+                currTime = (long) (x * mManager.getDuration());
+                mLyricsFragment.setCurrTime(currTime);
+                mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
+                mManager.setCurrTime((int) currTime);
+
+            }
+        });
     }
 
     @Override
@@ -245,5 +310,28 @@ public class MusicActivity
     public boolean isPlaying() {
         return isPlaying;
     }
+
+    private class ProgressTask extends TimerTask {
+
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (isPlaying) {
+                        mSbProgress.setProgress((int) mManager.getProgress());
+                        currTime += 10;
+                        mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
+                    }
+                }
+            });
+        }
+    }
+
+    public void setCurrTime(long currTime) {
+        this.currTime = currTime;
+        mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
+    }
+
 
 }

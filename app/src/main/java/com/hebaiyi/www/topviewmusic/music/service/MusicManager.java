@@ -73,10 +73,10 @@ public class MusicManager {
         }
     }
 
-    public int getCurrentPosition() {
+    public float getProgress() {
         if (isConnected) {
             try {
-                return mManager.getCurrentPosition();
+                return mManager.getProgress();
             } catch (RemoteException e) {
                 e.printStackTrace();
                 return -1;
@@ -115,6 +115,18 @@ public class MusicManager {
         }
     }
 
+    public long getDuration() {
+        if (isConnected) {
+            try {
+                return mManager.getDuration();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+        return -1;
+    }
+
     public void setSong(String songUrl) {
         if (songUrl == null || "".equals(songUrl)) {
             return;
@@ -138,7 +150,7 @@ public class MusicManager {
         }
     }
 
-    private class PrepareReceiver extends BroadcastReceiver{
+    private class PrepareReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -159,6 +171,7 @@ public class MusicManager {
     public interface MusicObserver {
 
         void OnPrepare();
+
         void onComplete();
     }
 

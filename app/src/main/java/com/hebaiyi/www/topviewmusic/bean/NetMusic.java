@@ -22,7 +22,6 @@ public class NetMusic {
         music.setSinger(songInfo.artist);
         music.setPlaying(isPlaying);
         music.setLyrics(songInfo.lrclink);
-        Log.e("createMusic", songInfo.lrclink);
         List<String> urls = new ArrayList<>();
         for (int i = 0; i < songUrl.url.size(); i++) {
             urls.add(songUrl.url.get(i).showLink);

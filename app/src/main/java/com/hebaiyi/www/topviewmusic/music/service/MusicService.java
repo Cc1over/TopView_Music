@@ -38,7 +38,6 @@ public class MusicService extends Service {
         });
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -71,9 +70,9 @@ public class MusicService extends Service {
                         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
-                                mPlayer.start();
                                 Intent i = new Intent(MUSIC_BROADCAST_RECEIVER_PREPARED_ACTION);
                                 sendBroadcast(i);
+                                mPlayer.start();
                             }
                         });
                         mPlayer.prepareAsync();
@@ -111,12 +110,18 @@ public class MusicService extends Service {
             @Override
             public void setCurrTime(int currTime) throws RemoteException {
                 Log.e("setCurrTime: ", currTime + "");
+                mPlayer.seekTo(currTime);
             }
 
             @Override
-            public int getCurrentPosition() throws RemoteException {
+            public int getDuration() throws RemoteException {
+                return mPlayer.getDuration();
+            }
+
+            @Override
+            public float getProgress() throws RemoteException {
                 if (mPlayer.isPlaying()) {
-                    return mPlayer.getCurrentPosition();
+                    return mPlayer.getCurrentPosition() * 100f / mPlayer.getDuration();
                 }
                 return -1;
             }
