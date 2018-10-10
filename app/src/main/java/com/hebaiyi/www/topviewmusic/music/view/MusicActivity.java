@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -19,9 +18,11 @@ import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.activity.BottomActivity;
 import com.hebaiyi.www.topviewmusic.bean.Music;
 import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
+import com.hebaiyi.www.topviewmusic.music.service.SongManager;
 import com.hebaiyi.www.topviewmusic.util.TimeUtil;
 import com.hebaiyi.www.topviewmusic.util.ToastUtil;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,12 +32,7 @@ public class MusicActivity
         extends BottomActivity implements View.OnClickListener {
 
     public static final String RECEIVER_ACTION = "com.hebaiyi.www.music.MusicActivity.RECEIVER";
-    public static final int MODE_LIST_LOOP = 0;
-    public static final int MODE_SINGER_LOOP = 1;
-    public static final int MODE_SHUFFLE_PLAYBACK = 2;
-    public static final int NEXT_SONG = 0X55EF;
-    public static final int PAST_SONG = 0X10FF;
-    public static int currMode = MODE_LIST_LOOP;
+    public int currPostition;
     private static final int FRAGMENT_PHOTO = 0XCCCC;
     private static final int FRAGMENT_LYRICS = 0XDDDD;
     private Toolbar mTbTitle;
@@ -57,6 +53,7 @@ public class MusicActivity
     private MusicManager.MusicObserver mObserver;
     private ProgressTask mTask;
     private long currTime;
+    private SongManager mSongManager;
 
     public static void actionStart(Context context, Music m) {
         Intent i = new Intent(context, MusicActivity.class);
@@ -84,6 +81,7 @@ public class MusicActivity
         initToolbar(mTbTitle, R.drawable.back_icon);
         replaceFragment();
         mSbProgress.setMax(100);
+
     }
 
     private void setData() {
@@ -102,7 +100,6 @@ public class MusicActivity
             }
         }
     }
-
 
     @Override
     public void onClick(View v) {
@@ -129,19 +126,21 @@ public class MusicActivity
     }
 
     private void changeMode() {
-        currMode++;
-        if (currMode == mModeDrawable.length) {
-            currMode = 0;
+        currPostition++;
+        List<Integer> mode = mSongManager.ObtainModeList();
+        if (currPostition == mode.size()) {
+            currPostition = 0;
         }
-        mIvMode.setImageResource(mModeDrawable[currMode]);
-        switch (currMode) {
-            case MODE_LIST_LOOP:
+        mSongManager.changeMode(mode.get(currPostition));
+        mIvMode.setImageResource(mModeDrawable[currPostition]);
+        switch (currPostition) {
+            case SongManager.MODE_LIST_LOOP:
                 ToastUtil.showToast("列表循环", Toast.LENGTH_SHORT);
                 break;
-            case MODE_SINGER_LOOP:
+            case SongManager.MODE_SINGER_LOOP:
                 ToastUtil.showToast("单曲循环", Toast.LENGTH_SHORT);
                 break;
-            case MODE_SHUFFLE_PLAYBACK:
+            case SongManager.MODE_SHUFFLE_PLAYBACK:
                 ToastUtil.showToast("随机播放", Toast.LENGTH_SHORT);
                 break;
         }
@@ -152,15 +151,21 @@ public class MusicActivity
     }
 
     private void nextSong() {
-        Intent i = new Intent(RECEIVER_ACTION);
-        i.putExtra("operate", NEXT_SONG);
-        sendBroadcast(i);
+        mSongManager.nextSong(true);
+        mIvPlay.setImageResource(R.drawable.music_playing);
+        isPlaying = true;
+        mPhotoFragment.setRotate(isPlaying);
+        currTime = 0;
+        mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
     }
 
     private void pastSong() {
-        Intent i = new Intent(RECEIVER_ACTION);
-        i.putExtra("operate", PAST_SONG);
-        sendBroadcast(i);
+        mSongManager.pastSong();
+        mIvPlay.setImageResource(R.drawable.music_playing);
+        isPlaying = true;
+        mPhotoFragment.setRotate(isPlaying);
+        currTime = 0;
+        mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
     }
 
     private void processPlayback() {
@@ -189,6 +194,7 @@ public class MusicActivity
             isPlaying = mMusic.isPlaying();
         }
         mManager = MusicManager.getInstance();
+        mSongManager = SongManager.getInstance();
         if (mTimer == null) {
             mTimer = new Timer();
             mTask = new ProgressTask();
@@ -197,11 +203,14 @@ public class MusicActivity
         mObserver = new MusicManager.MusicObserver() {
             @Override
             public void OnPrepare() {
+                isPlaying = true;
             }
 
             @Override
             public void onComplete() {
+                isPlaying = false;
                 currTime = 0;
+                mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
             }
         };
         mManager.attach(mObserver);
@@ -215,6 +224,7 @@ public class MusicActivity
             mTimer = null;
         }
         mManager.detach(mObserver);
+
     }
 
     @Override
@@ -222,7 +232,7 @@ public class MusicActivity
 
     }
 
-    @Subscribe(sticky = true, priority = 1)
+    @Subscribe(sticky = true)
     public void onChangeEvent(Music music) {
         mMusic = music;
         setData();
@@ -240,8 +250,7 @@ public class MusicActivity
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    float x = progress * 1.0f / 100;
-                    currTime = (long) (x * mManager.getDuration());
+                    currTime = getCurrProgress(seekBar);
                     mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
                 }
             }
@@ -253,15 +262,18 @@ public class MusicActivity
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                float x = seekBar.getProgress() * 1.0f / 100;
                 seekBar.setProgress(seekBar.getProgress());
-                currTime = (long) (x * mManager.getDuration());
+                currTime = getCurrProgress(seekBar);
                 mLyricsFragment.setCurrTime(currTime);
                 mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
                 mManager.setCurrTime((int) currTime);
-
             }
         });
+    }
+
+    private long getCurrProgress(SeekBar seekBar) {
+        float x = seekBar.getProgress() * 1.0f / 100;
+        return (long) (x * mManager.getDuration());
     }
 
     @Override
@@ -332,6 +344,5 @@ public class MusicActivity
         this.currTime = currTime;
         mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
     }
-
 
 }

@@ -2,7 +2,6 @@ package com.hebaiyi.www.topviewmusic.music.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.fragment.BaseFragment;
@@ -30,6 +29,7 @@ public class LyricsFragment
     private MusicManager.MusicObserver mObserver;
     private long currTime;
     private boolean isStart = true;
+    private int currPosition;
 
     @Override
     protected LyricsPresenterImp createPresenter() {
@@ -59,16 +59,17 @@ public class LyricsFragment
         if (path != null && !"".equals(path)) {
             obtainPresenter().obtainLyrics(path);
         }
-        mManager.attach(mObserver);
+
         mLyricsView.setListener(new LyricsView.ILrcViewListener() {
             @Override
             public void onLrcSeeked(int position, Lyrics lrcRow) {
                 currTime = lrcRow.getTime();
+                currPosition = position;
                 mManager.setCurrTime((int) lrcRow.getTime());
                 mParentActivity.setCurrTime(lrcRow.getTime());
             }
         });
-        mLyricsView.seekLrcToTime(currTime);
+        mLyricsView.setHighlightRow(currPosition);
     }
 
     @Override
@@ -93,14 +94,17 @@ public class LyricsFragment
                 currTime = 0;
             }
         };
+        mManager.attach(mObserver);
     }
 
-    public void setCurrTime(long currTime){
+    public void setCurrTime(long currTime) {
         this.currTime = currTime;
-        mLyricsView.seekLrcToTime(currTime);
+        if (mLyricsView != null) {
+            mLyricsView.seekLrcToTime(currTime);
+        }
     }
 
-    public void isLyricsStart(boolean isStart){
+    public void isLyricsStart(boolean isStart) {
         this.isStart = isStart;
     }
 

@@ -22,6 +22,7 @@ import com.hebaiyi.www.topviewmusic.local.adapter.LocalMusicListAdapter;
 import com.hebaiyi.www.topviewmusic.local.contract.LocalMusicListContract;
 import com.hebaiyi.www.topviewmusic.local.presenter.LocalMusicListPresenterImp;
 import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
+import com.hebaiyi.www.topviewmusic.music.service.SongManager;
 import com.hebaiyi.www.topviewmusic.music.view.BottomFragment;
 import com.hebaiyi.www.topviewmusic.music.view.MusicActivity;
 import com.hebaiyi.www.topviewmusic.util.MatheUtil;
@@ -34,7 +35,6 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -49,10 +49,9 @@ public class LocalMusicListActivity
     private SidebarView mSidebarView;
     private List<String> mFirstWords;
     private BottomFragment mBottomFragment;
-    private List<LocalMusic> mMusics;
-    private int currPosition;
-    private MusicManager mManager = MusicManager.getInstance();
-    private MusicReceiver mReceiver;
+    private List<Music> mMusics;
+    private MusicManager mMusicManager = MusicManager.getInstance();
+    private SongManager mSongManager = SongManager.getInstance();
     private MusicManager.MusicObserver mObserver;
 
     public static void actionStart(Context context) {
@@ -97,7 +96,7 @@ public class LocalMusicListActivity
         return true;
     }
 
-    private void obtainFirstWord(List<LocalMusic> musics) {
+    private void obtainFirstWord(List<Music> musics) {
         mFirstWords = new ArrayList<>(musics.size());
         //1.创建一个格式化输出对象
         HanyuPinyinOutputFormat outputF = new HanyuPinyinOutputFormat();
@@ -119,11 +118,12 @@ public class LocalMusicListActivity
     }
 
     @Override
-    public void showLocalMusicList(List<LocalMusic> musics) {
+    public void showLocalMusicList(List<Music> musics) {
         if (musics == null) {
             return;
         }
         mMusics = musics;
+        mSongManager.setSongList(mMusics);
         final LocalMusicListAdapter adapter = new LocalMusicListAdapter(musics);
         final LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
         mRcvContent.setLayoutManager(manager);
@@ -135,62 +135,28 @@ public class LocalMusicListActivity
                 if (mMusics.size() == 0) {
                     return;
                 }
-                if (currPosition == position && currPosition != 0) {
+                if (mSongManager.obtainCurrPosition() == position
+                        && mSongManager.obtainCurrPosition() != 0) {
                     MusicActivity.actionStart(
-                            LocalMusicListActivity.this, setBottomSong(currPosition));
+                            LocalMusicListActivity.this, setBottomSong(position));
                 } else {
-                    currPosition = position;
-                    mManager.setSong(setBottomSong(position).getUrl());
+                    mSongManager.setCurrPosition(position);
+                    mMusicManager.setSong(setBottomSong(position).getUrl());
                 }
             }
         });
 
     }
 
-    private void listLoop() {
-        if (currPosition + 1 == mMusics.size()) {
-            currPosition = 0;
-            postMusic(currPosition);
-            return;
-        }
-        postMusic(++currPosition);
-    }
-
-    private void singleLoop() {
-        postMusic(currPosition);
-    }
-
-    private void shufflePlayback() {
-        currPosition = MatheUtil.createRandomNumber(0, mMusics.size() - 1);
-        postMusic(currPosition);
-    }
-
-    private void postMusic(int position) {
-        if (position >= mMusics.size()) {
-            return;
-        }
-        Music music = setBottomSong(position);
-        mManager.setSong(music.getUrl());
-        EventBus.getDefault().postSticky(music);
-    }
-
     private Music setBottomSong(int position) {
-        LocalMusic lm = mMusics.get(position);
-        Music m = lm.createMusic(true);
-        mBottomFragment.setBottomSong(m);
-        return m;
-    }
-
-    private void registered() {
-        mReceiver = new MusicReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MusicActivity.RECEIVER_ACTION);
-        registerReceiver(mReceiver, filter);
+        Music music = mMusics.get(position);
+        music.setPlaying(true);
+        mBottomFragment.setBottomSong(music);
+        return music;
     }
 
     @Override
     protected void initVariables() {
-        registered();
         mObserver = new MusicManager.MusicObserver() {
             @Override
             public void OnPrepare() {
@@ -199,16 +165,17 @@ public class LocalMusicListActivity
 
             @Override
             public void onComplete() {
-                nextSong(false);
+                setBottomSong(mSongManager.obtainCurrPosition());
+                mSongManager.nextSong(false);
             }
         };
+        mMusicManager.attach(mObserver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
-        mManager.detach(mObserver);
+        mMusicManager.detach(mObserver);
     }
 
     @Override
@@ -221,28 +188,6 @@ public class LocalMusicListActivity
             obtainPresenter().obtainLocalMusicList(getApplicationContext());
         }
     }
-
-    private void nextSong(boolean manual) {
-        switch (MusicActivity.currMode) {
-            case MusicActivity.MODE_LIST_LOOP:
-                listLoop();
-                break;
-            case MusicActivity.MODE_SINGER_LOOP:
-                if (manual) {
-                    listLoop();
-                } else {
-                    singleLoop();
-                }
-                break;
-            case MusicActivity.MODE_SHUFFLE_PLAYBACK:
-                shufflePlayback();
-                break;
-            default:
-                listLoop();
-                break;
-        }
-    }
-
 
     @Override
     protected void initEvents() {
@@ -257,28 +202,6 @@ public class LocalMusicListActivity
                 }
             }
         });
-        mManager.attach(mObserver);
-    }
-
-    private class MusicReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int operate = intent.getIntExtra("operate", -1);
-            if (operate != -1) {
-                if (operate == MusicActivity.NEXT_SONG) {
-                    nextSong(true);
-                }
-                if (operate == MusicActivity.PAST_SONG) {
-                    if (currPosition - 1 < 0) {
-                        currPosition = mMusics.size() - 1;
-                        postMusic(currPosition);
-                        return;
-                    }
-                    postMusic(--currPosition);
-                }
-            }
-        }
     }
 
 }

@@ -12,17 +12,18 @@ import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.adapter.BaseAdapter;
 import com.hebaiyi.www.topviewmusic.base.adapter.CommonViewHolder;
 import com.hebaiyi.www.topviewmusic.bean.LocalMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
 
 import java.util.List;
 
-public class LocalMusicListAdapter extends BaseAdapter<LocalMusic> {
+public class LocalMusicListAdapter extends BaseAdapter<Music> {
 
     public final static int TYPE_HEADER = 0XCCDF;
     public final static int TYPE_NORMAL = 0XDDFF;
 
     private LocalMusicListListener mListener;
 
-    public LocalMusicListAdapter(List<LocalMusic> list) {
+    public LocalMusicListAdapter(List<Music> list) {
         super(list, R.layout.local_music_list_item);
     }
 
@@ -64,11 +65,11 @@ public class LocalMusicListAdapter extends BaseAdapter<LocalMusic> {
     }
 
     @Override
-    public void renewListItem(CommonViewHolder viewHolder, LocalMusic localMusic) {
+    public void renewListItem(CommonViewHolder viewHolder, Music music) {
         TextView name = viewHolder.getView(R.id.list_item_tv_name);
         TextView singer = viewHolder.getView(R.id.list_item_tv_singer);
-        name.setText(localMusic.getName());
-        singer.setText(localMusic.getSinger());
+        name.setText(music.getName());
+        singer.setText(music.getSinger());
     }
 
     @Override

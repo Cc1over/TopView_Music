@@ -2,14 +2,14 @@ package com.hebaiyi.www.topviewmusic.local.contract;
 
 import android.content.Context;
 
-import com.hebaiyi.www.topviewmusic.bean.LocalMusic;
+import com.hebaiyi.www.topviewmusic.bean.Music;
 
 import java.util.List;
 
 public class LocalMusicListContract {
 
     public interface LocalMusicListView{
-        void showLocalMusicList(List<LocalMusic> musics);
+        void showLocalMusicList(List<Music> musics);
     }
 
     public interface LocalMusicListPresenter{
