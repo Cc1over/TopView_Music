@@ -29,7 +29,7 @@ public class LyricsFragment
     private MusicManager.MusicObserver mObserver;
     private long currTime;
     private boolean isStart = true;
-    private int currPosition;
+    private static int currPosition;
 
     @Override
     protected LyricsPresenterImp createPresenter() {
@@ -118,7 +118,6 @@ public class LyricsFragment
         mParentActivity.replaceFragment();
     }
 
-
     private class LyricsTask extends TimerTask {
 
         @Override
@@ -134,7 +133,6 @@ public class LyricsFragment
         }
     }
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -143,7 +141,6 @@ public class LyricsFragment
             mTimer = null;
         }
     }
-
 
     @Override
     public void onDestroy() {

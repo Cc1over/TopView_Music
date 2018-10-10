@@ -111,7 +111,7 @@ public class LyricsView extends View {
         }
     }
 
-    public void setHighlightRow(int row){
+    public void setHighlightRow(int row) {
         mHighlightRow = row;
     }
 
@@ -346,6 +346,7 @@ public class LyricsView extends View {
             }
         }
     }
+
 
     public interface ILrcViewListener {
         void onLrcSeeked(int position, Lyrics lrcRow);

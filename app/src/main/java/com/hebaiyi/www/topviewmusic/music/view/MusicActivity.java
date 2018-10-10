@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -81,7 +82,6 @@ public class MusicActivity
         initToolbar(mTbTitle, R.drawable.back_icon);
         replaceFragment();
         mSbProgress.setMax(100);
-
     }
 
     private void setData() {
@@ -100,6 +100,16 @@ public class MusicActivity
             }
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSbProgress.setProgress((int) mManager.getProgress());
+        currTime = getCurrProgress(mSbProgress);
+        mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
+//        mLyricsFragment.setCurrTime(currTime);
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -224,7 +234,6 @@ public class MusicActivity
             mTimer = null;
         }
         mManager.detach(mObserver);
-
     }
 
     @Override
