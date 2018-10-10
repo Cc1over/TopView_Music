@@ -329,12 +329,12 @@ public class LyricsView extends View {
         invalidate();
     }
 
-    public void seekLrcToTime(long time) {
+    public int seekLrcToTime(long time) {
         if (mLrcRows == null || mLrcRows.size() == 0) {
-            return;
+            return -1;
         }
         if (mDisplayMode != DISPLAY_MODE_NORMAL) {
-            return;
+            return -1;
         }
         for (int i = 0; i < mLrcRows.size(); i++) {
             Lyrics current = mLrcRows.get(i);
@@ -342,9 +342,10 @@ public class LyricsView extends View {
             if ((time >= current.getTime() && next != null && time < next.getTime())
                     || (time > current.getTime() && next == null)) {
                 seekLrc(i, false);
-                return;
+                return i;
             }
         }
+        return -1;
     }
 
 

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@color/transparent">
+
+    <ImageView
+        android:id="@+id/control_iv_pic"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/c1over_icon"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:id="@+id/control_llyt_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/control_iv_pic"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/control_tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="TOPVIEW_MUSIC"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/control_tv_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Cc1over"
+            android:textColor="@color/deep_grey"
+            android:textSize="11sp"
+            tools:ignore="SmallSp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/control_llyt_text"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/control_ib_past"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:src="@drawable/control_past"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/control_ib_play"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15dp"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:src="@drawable/control_playing"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/control_ib_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15dp"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:src="@drawable/control_next"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/control_ib_close"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:src="@drawable/control_close"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+</RelativeLayout>

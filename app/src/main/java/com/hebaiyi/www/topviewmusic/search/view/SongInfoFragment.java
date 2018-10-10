@@ -10,6 +10,7 @@ import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.adapter.LoadMoreWrapper;
 import com.hebaiyi.www.topviewmusic.base.fragment.LazyFragment;
 import com.hebaiyi.www.topviewmusic.bean.SearchMerge;
+import com.hebaiyi.www.topviewmusic.music.service.SongManager;
 import com.hebaiyi.www.topviewmusic.search.adpater.SongInfoAdapter;
 import com.hebaiyi.www.topviewmusic.search.contract.SearchContract;
 
@@ -25,6 +26,7 @@ public class SongInfoFragment extends LazyFragment {
     private List<SearchMerge.SongInfo> mSongInfos;
     private ResultFragment mParentFragment;
     private LoadMoreWrapper mWrapper;
+    private SongManager mSongManager = SongManager.getInstance();
 
     @Override
     protected int getContentViewId() {

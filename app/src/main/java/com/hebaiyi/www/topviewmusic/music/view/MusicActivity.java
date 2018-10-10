@@ -32,7 +32,6 @@ import de.greenrobot.event.Subscribe;
 public class MusicActivity
         extends BottomActivity implements View.OnClickListener {
 
-    public static final String RECEIVER_ACTION = "com.hebaiyi.www.music.MusicActivity.RECEIVER";
     public int currPostition;
     private static final int FRAGMENT_PHOTO = 0XCCCC;
     private static final int FRAGMENT_LYRICS = 0XDDDD;
@@ -106,8 +105,8 @@ public class MusicActivity
         super.onResume();
         mSbProgress.setProgress((int) mManager.getProgress());
         currTime = getCurrProgress(mSbProgress);
+        mLyricsFragment.setCurrTime(currTime);
         mTvCurrTime.setText(TimeUtil.conversionToStr(currTime));
-//        mLyricsFragment.setCurrTime(currTime);
     }
 
 

@@ -10,6 +10,7 @@
     <color name="shallow_grey">#ffCCCCCC</color>
     <color name="deep_grey">#666666</color>
     <color name="silver">#F4F4F4</color>
+    <color name="shallow_black">#333333</color>
     <color name="transparent">#00000000</color>
 </resources>
 

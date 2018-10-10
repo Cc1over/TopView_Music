@@ -2,6 +2,7 @@ package com.hebaiyi.www.topviewmusic.music.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.hebaiyi.www.topviewmusic.R;
 import com.hebaiyi.www.topviewmusic.base.fragment.BaseFragment;
@@ -11,6 +12,7 @@ import com.hebaiyi.www.topviewmusic.music.presenter.LyricsPresenterImp;
 import com.hebaiyi.www.topviewmusic.music.service.MusicManager;
 import com.hebaiyi.www.topviewmusic.widget.LyricsView;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,7 +31,6 @@ public class LyricsFragment
     private MusicManager.MusicObserver mObserver;
     private long currTime;
     private boolean isStart = true;
-    private static int currPosition;
 
     @Override
     protected LyricsPresenterImp createPresenter() {
@@ -59,17 +60,14 @@ public class LyricsFragment
         if (path != null && !"".equals(path)) {
             obtainPresenter().obtainLyrics(path);
         }
-
         mLyricsView.setListener(new LyricsView.ILrcViewListener() {
             @Override
             public void onLrcSeeked(int position, Lyrics lrcRow) {
                 currTime = lrcRow.getTime();
-                currPosition = position;
                 mManager.setCurrTime((int) lrcRow.getTime());
                 mParentActivity.setCurrTime(lrcRow.getTime());
             }
         });
-        mLyricsView.setHighlightRow(currPosition);
     }
 
     @Override
@@ -86,7 +84,6 @@ public class LyricsFragment
         mObserver = new MusicManager.MusicObserver() {
             @Override
             public void OnPrepare() {
-
             }
 
             @Override
@@ -112,13 +109,14 @@ public class LyricsFragment
     public void showLyrics(List<Lyrics> lyricses) {
         mLyricsView.attach(this);
         mLyricsView.setLyrics(lyricses);
+        mLyricsView.seekLrcToTime(currTime);
     }
 
     public void replace() {
         mParentActivity.replaceFragment();
     }
 
-    private class LyricsTask extends TimerTask {
+    private  class LyricsTask extends TimerTask {
 
         @Override
         public void run() {
